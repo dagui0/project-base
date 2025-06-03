@@ -1,6 +1,6 @@
-package com.yidigun.base.examples;
+package com.yidigun.base.fluent.examples;
 
-import com.yidigun.base.PrimaryKey;
+import com.yidigun.base.fluent.PrimaryKey;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +76,7 @@ public final class ResidentKey implements PrimaryKey, CharSequence, Comparable<R
     public boolean isValid() { return isValid(residentId); }
     public boolean isMale() { return valueAt(6) % 2 == 1; }
     public boolean isFemale() { return valueAt(6) % 2 == 0; }
-    public Instant getBirthday() { return getBirthday(this); }
+    public Instant birthday() { return birthday(this); }
 
     @Override
     public int length() { return residentId.length(); }
@@ -163,7 +163,7 @@ public final class ResidentKey implements PrimaryKey, CharSequence, Comparable<R
         return valueAt(residentKey.residentId, index);
     }
 
-    public static Instant getBirthday(ResidentKey residentKey)  {
+    public static Instant birthday(ResidentKey residentKey)  {
         Calendar cal = Calendar.getInstance();
         int year = Integer.parseInt(residentKey.subSequence(0, 2));
         int month = Integer.parseInt(residentKey.subSequence(2, 4));
@@ -175,18 +175,18 @@ public final class ResidentKey implements PrimaryKey, CharSequence, Comparable<R
     }
 
     public interface Aware {
-        default ResidentKey getResidentKey() {
-            return ResidentKey.ofUnchecked(getResidentId());
+        default ResidentKey residentKey() {
+            return ResidentKey.ofUnchecked(residentId());
         }
         default Optional<ResidentKey> tryGetResidentKey() {
-            return ResidentKey.ofNullable(getResidentId());
+            return ResidentKey.ofNullable(residentId());
         }
 
-        String getResidentId();
+        String residentId();
 
         public interface Builder<B extends Builder<B>> {
             default B residentKey(ResidentKey key) {
-                return residentId(key.getResidentId());
+                return residentId(key.residentId());
             }
             B residentId(String residentId);
         }

@@ -14,7 +14,7 @@ import static com.google.testing.compile.CompilationSubject.assertThat;
 
 public class CheckEqualsAndHashCodeProcessorTest {
 
-    private Compiler getTestCompiler(Processor... processors) {
+    private Compiler getTestCompiler() {
 
         Processor lombok1 = AnnotationProcessorHelper.getAnnotationProcessor();
         Processor lombok2 = AnnotationProcessorHelper.getClaimingProcessor();
@@ -153,7 +153,7 @@ import lombok.RequiredArgsConstructor;
 @CheckEqualsAndHashCode
 public class NotOverrideEquals {
     private final String name;
-    
+
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
@@ -189,7 +189,7 @@ import lombok.RequiredArgsConstructor;
 @CheckEqualsAndHashCode
 public class NotOverrideHashCode {
     private final String name;
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

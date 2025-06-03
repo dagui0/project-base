@@ -1,7 +1,7 @@
-package com.yidigun.base;
+package com.yidigun.base.beans;
 
-import com.yidigun.base.examples.ComplexKeyExample;
-import com.yidigun.base.examples.SimpleKeyExample;
+import com.yidigun.base.beans.examples.ComplexKeyExample;
+import com.yidigun.base.beans.examples.SimpleKeyExample;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

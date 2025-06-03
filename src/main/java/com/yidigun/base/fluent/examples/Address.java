@@ -1,7 +1,7 @@
-package com.yidigun.base.examples;
+package com.yidigun.base.fluent.examples;
 
-import com.yidigun.base.DomainObject;
-import com.yidigun.base.PrimaryKey;
+import com.yidigun.base.fluent.DomainObject;
+import com.yidigun.base.fluent.PrimaryKey;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,13 +27,13 @@ public class Address implements DomainObject<Address.Key>, MemberKey.Aware {
     private final Instant createDate;   // logging field
 
     @Override
-    public Key getPrimaryKey() {
+    public Key primaryKey() {
         return new Key(memberNo, addressNo);
     }
 
     /// lombok @Builder 용 빌더클래스
-    public static class AddressBuilder implements MemberKey.Aware.Builder<AddressBuilder> {
-        AddressBuilder primaryKey(Address.Key key) {
+    public static class AddressBuilder implements Builder<AddressBuilder> {
+        AddressBuilder primaryKey(Key key) {
             return memberNo(key.memberNo())
                   .addressNo(key.addressNo());
         }
@@ -50,13 +50,6 @@ public class Address implements DomainObject<Address.Key>, MemberKey.Aware {
 
         public static Key of(MemberKey memberKey, long addressNo) {
             return new Key(memberKey.longValue(), addressNo);
-        }
-        @Override
-        public long getMemberNo() {
-            return memberNo;
-        }
-        public long getAddressNo() {
-            return addressNo;
         }
     }
 }

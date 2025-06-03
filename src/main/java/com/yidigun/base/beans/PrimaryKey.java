@@ -1,7 +1,7 @@
-package com.yidigun.base;
+package com.yidigun.base.beans;
 
-import com.yidigun.base.examples.MemberKey;
-import com.yidigun.base.examples.ResidentKey;
+import com.yidigun.base.beans.examples.MemberKey;
+import com.yidigun.base.beans.examples.ResidentKey;
 
 import java.util.Map;
 
@@ -84,8 +84,8 @@ import java.util.Map;
 ///     /// memberNo를 PK또는 필드에 사용하는 테이블용 인터페이스
 ///     /// 기본 메소드를 이용하여 메소드를 미리 구현해 놓는다. (Java 8 이상)
 ///     public interface Aware {
-///         default MemberKey getMemberKey() { return MemberKey.of(getMemberNo()); }
-///         long getMemberNo(); // lombok @Getter 사용하여 생성 가능
+///         default MemberKey memberKey() { return MemberKey.of(memberNo()); }
+///         long memberNo(); // lombok @Getter 사용하여 생성 가능
 /// 
 ///         /// Aware 객체를 만드는 빌더용 인터페이스 (long과 MemberKey를 변환하기 위한)
 ///         public interface Builder<B extends Builder<B>> {
@@ -120,7 +120,7 @@ import java.util.Map;
 ///     // Address.Key 역시 MemberKey.Aware임
 ///     // 단, record 클래스에는 @Getter를 붙일 수 없다.
 ///     public record Key(long memberNo, long addressNo) implements PrimaryKey, MemberKey.Aware {
-///         @Override public long getMemberNo() { return memberNo; }
+///         @Override public long memberNo() { return memberNo; }
 ///     }
 ///     ...
 ///     public static class AddressBuilder implements MemberKey.Aware.Builder<AddressBuilder> {

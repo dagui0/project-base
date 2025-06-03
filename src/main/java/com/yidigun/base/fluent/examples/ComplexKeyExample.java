@@ -1,7 +1,7 @@
-package com.yidigun.base.examples;
+package com.yidigun.base.fluent.examples;
 
-import com.yidigun.base.DomainObject;
-import com.yidigun.base.PrimaryKey;
+import com.yidigun.base.fluent.DomainObject;
+import com.yidigun.base.fluent.PrimaryKey;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -52,7 +52,7 @@ public final class ComplexKeyExample implements DomainObject<ComplexKeyExample.K
     }
 
     @Override
-    public Key getPrimaryKey() {
+    public Key primaryKey() {
         return new Key(keyPart1, keyPart2);
     }
 
@@ -60,7 +60,7 @@ public final class ComplexKeyExample implements DomainObject<ComplexKeyExample.K
     /// @return 해시코드
     @Override
     public int hashCode() {
-        return Objects.hash(getPrimaryKey(), otherField1, otherField2);
+        return Objects.hash(primaryKey(), otherField1, otherField2);
     }
 
     /// PK와 값데이터만 비교하는 메소드

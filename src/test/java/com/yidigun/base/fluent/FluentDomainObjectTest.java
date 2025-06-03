@@ -1,14 +1,16 @@
-package com.yidigun.base;
+package com.yidigun.base.fluent;
 
-import com.yidigun.base.examples.*;
+import com.yidigun.base.fluent.examples.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DomainObjectTest {
+public class FluentDomainObjectTest {
 
     @Test
     public void testSemanticEquality() {
@@ -56,20 +58,20 @@ public class DomainObjectTest {
         assertThrows(ClassCastException.class, () -> {
             @SuppressWarnings("SortedCollectionWithNonComparableKeys")
             Map<PrimaryKey, DomainObject<?>> map1 = new TreeMap<>();
-            map1.put(example1.getPrimaryKey(), example1);
-            assertTrue(map1.containsKey(example1.getPrimaryKey()));
+            map1.put(example1.primaryKey(), example1);
+            assertTrue(map1.containsKey(example1.primaryKey()));
         });
 
         // comparable pk
         Instant now = Instant.now();
         SimpleKeyExample example2 = new SimpleKeyExample();
-        example2.setNo(1);
-        example2.setName("example");
-        example2.setCreateDate(now);
+        example2.no(1);
+        example2.name("example");
+        example2.createDate(now);
 
         assertDoesNotThrow(() -> {
             // <K extends PrimaryKey & Comparable<K>, V extends BaseDomainObject<K>>
-            testGenericType(example2.getPrimaryKey(), example2);
+            testGenericType(example2.primaryKey(), example2);
         });
     }
 
@@ -97,8 +99,8 @@ public class DomainObjectTest {
                 .updateDate(now)
                 .build();
 
-        assertEquals(currentMemberKey.longValue(), member.getPrimaryKey().longValue());
-        assertEquals(currentMemberKey.longValue(), member.getMemberKey().longValue());
+        assertEquals(currentMemberKey.longValue(), member.primaryKey().longValue());
+        assertEquals(currentMemberKey.longValue(), member.memberKey().longValue());
 
         // Child table
         Address address = Address.builder()
@@ -108,13 +110,13 @@ public class DomainObjectTest {
                 .createDate(now)
                 .build();
 
-        assertEquals(currentMemberKey, address.getMemberKey());
+        assertEquals(currentMemberKey, address.memberKey());
         // Address.Key is also MemberKey.Aware
-        assertEquals(currentMemberKey.longValue(), address.getPrimaryKey().getMemberKey().longValue());
+        assertEquals(currentMemberKey.longValue(), address.primaryKey().memberKey().longValue());
 
         // Address.Key type is a standalone value type.
-        Address.Key key = Address.Key.of(member.getPrimaryKey(), 1);
-        assertEquals(key, address.getPrimaryKey());
+        Address.Key key = Address.Key.of(member.primaryKey(), 1);
+        assertEquals(key, address.primaryKey());
 
         // Post table has reference to Member table
         Post post = Post.builder()
@@ -125,8 +127,8 @@ public class DomainObjectTest {
                 .createDate(now)
                 .updateDate(now).build();
 
-        assertEquals(currentMemberKey, post.getMemberKey());
-        assertEquals(currentMemberKey.longValue(), post.getMemberKey().longValue());
+        assertEquals(currentMemberKey, post.memberKey());
+        assertEquals(currentMemberKey.longValue(), post.memberKey().longValue());
     }
 
     @Test
@@ -156,10 +158,10 @@ public class DomainObjectTest {
         assertEquals(resident1, resident2);
         assertFalse(resident1.equalsAllFields(resident2));
 
-        assertEquals("111111", resident1.getResidentKey().subSequence(0, 6));
+        assertEquals("111111", resident1.residentKey().subSequence(0, 6));
 
         Calendar cal = Calendar.getInstance();
         cal.set(1911, 10, 11);
-        assertEquals(cal.toInstant(), resident1.getResidentKey().getBirthday());
+        assertEquals(cal.toInstant(), resident1.residentKey().birthday());
     }
 }

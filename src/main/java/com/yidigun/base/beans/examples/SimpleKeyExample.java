@@ -1,8 +1,7 @@
-package com.yidigun.base.examples;
+package com.yidigun.base.beans.examples;
 
-import com.yidigun.base.DomainObject;
-import com.yidigun.base.PrimaryKey;
-import lombok.AllArgsConstructor;
+import com.yidigun.base.beans.DomainObject;
+import com.yidigun.base.beans.PrimaryKey;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

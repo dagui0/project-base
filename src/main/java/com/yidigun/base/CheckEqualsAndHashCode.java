@@ -1,13 +1,17 @@
 package com.yidigun.base;
 
+import com.yidigun.base.processors.CheckEqualsAndHashCodeProcessor;
+
 import java.lang.annotation.*;
 
 /// 클래스가 [Object#equals(Object)] 와 [Object#hashCode()]를
 /// 재정의 하지 않은 경우 컴파일러 경고를 발생시키도록 하는 어노테이션.
 ///
-/// ## 경고 억제 방법
+/// 이 어노테이션의 목적은 기본 추상 클래스에 적용하여,
+/// 프로젝트의 코딩 컨벤션을 유지하는 것을 돕기 위한 것이다.
 ///
-/// 특정 자식 클래스에서 컴파일러 경고를 억제하려면, [SuppressWarnings] 어노테이션을 사용할 수 있다:
+/// 이 어노테이션은 상속이 되기 때문에 최상위 추상 클래스에 지정해 놓으면
+/// 하위 클래스들에도 자동적으로 적용이 된다.
 ///
 /// ```java
 /// // project/base/BaseClass.java
@@ -22,8 +26,21 @@ import java.lang.annotation.*;
 /// import com.yidigun.base.CheckEqualsAndHashCode;
 /// import project.base.BaseClass;
 ///
-/// @SuppressWarnings("checkEqualsAndHashCode")
 /// public class DerivedClass extends BaseClase {}
+/// ```
+///
+/// ## 경고 억제 방법
+///
+/// 특정 자식 클래스에서 컴파일러 경고를 억제하려면, [SuppressWarnings] 어노테이션을 사용할 수 있다:
+///
+/// ```java
+/// package project.domain;
+///
+/// import com.yidigun.base.CheckEqualsAndHashCode;
+/// import project.base.BaseClass;
+///
+/// @SuppressWarnings("checkEqualsAndHashCode")
+/// public class NotUseEqualsOrHashCode extends BaseClase {}
 /// ```
 ///
 /// 특정 패키지 전체에서 경고를 억제하려면 `package-info.java` 파일에 [SuppressWarnings]을 추가할 수도 있다:
@@ -50,8 +67,8 @@ import java.lang.annotation.*;
 ///
 /// ```groovy
 /// dependencies {
-///     implementation 'com.yidigun:project-base:1.0.0'
-///     annotationProcessor 'com.yidigun:project-base:1.0.0'
+///     implementation 'com.yidigun:project-base:0.0.1'
+///     annotationProcessor 'com.yidigun:project-base:0.0.1'
 /// }
 /// ```
 ///
@@ -59,8 +76,8 @@ import java.lang.annotation.*;
 ///
 /// ```kotlin
 /// dependencies {
-///     implementation("com.yidigun:project-base:1.0.0")
-///     annotationProcessor("com.yidigun:project-base:1.0.0")
+///     implementation("com.yidigun:project-base:0.0.1")
+///     annotationProcessor("com.yidigun:project-base:0.0.1")
 /// }
 /// ```
 ///
@@ -79,7 +96,7 @@ import java.lang.annotation.*;
 ///                     <path>
 ///                         <groupId>com.yidigun</groupId>
 ///                         <artifactId>project-base</artifactId>
-///                         <version>1.0.0</version>
+///                         <version>0.0.1</version>
 ///                     </path>
 ///                 </annotationProcessorPaths>
 ///                 ...
@@ -92,7 +109,7 @@ import java.lang.annotation.*;
 ///     <dependency>
 ///         <groupId>com.yidigun</groupId>
 ///         <artifactId>project-base</artifactId>
-///         <version>1.0.0</version>
+///         <version>0.0.1</version>
 ///         <scope>compile</scope>
 ///         <optional>true</optional>
 ///     </dependency>
@@ -101,6 +118,7 @@ import java.lang.annotation.*;
 /// ```
 ///
 /// @see SuppressWarnings
+/// @see CheckEqualsAndHashCodeProcessor
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 @Inherited

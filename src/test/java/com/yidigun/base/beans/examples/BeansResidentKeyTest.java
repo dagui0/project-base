@@ -1,4 +1,4 @@
-package com.yidigun.base.examples;
+package com.yidigun.base.beans.examples;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ResidentKeyTest {
+public class BeansResidentKeyTest {
 
     @Test
     public void testMale() {

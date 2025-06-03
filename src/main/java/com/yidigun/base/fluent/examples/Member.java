@@ -1,6 +1,6 @@
-package com.yidigun.base.examples;
+package com.yidigun.base.fluent.examples;
 
-import com.yidigun.base.DomainObject;
+import com.yidigun.base.fluent.DomainObject;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,12 +28,12 @@ public class Member implements DomainObject<MemberKey>, MemberKey.Aware {
     private Instant updateDate;
 
     @Override
-    public MemberKey getPrimaryKey() {
+    public MemberKey primaryKey() {
         return MemberKey.of(memberNo);
     }
 
     /// lombok @Builder 용 빌더클래스
-    public static class MemberBuilder implements MemberKey.Aware.Builder<MemberBuilder> {
+    public static class MemberBuilder implements Builder<MemberBuilder> {
         MemberBuilder primaryKey(MemberKey key) {
             return memberKey(key);
         }

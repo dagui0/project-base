@@ -1,17 +1,20 @@
 package lombok.launch;
 
-import lombok.launch.AnnotationProcessorHider.AnnotationProcessor;
-import lombok.launch.AnnotationProcessorHider.ClaimingProcessor;
-
 import javax.annotation.processing.Processor;
 
+/// 테스트 클래스에서 lombok package-private으로 설정된
+/// 프로세서들의 참조를 얻기 위한 헬퍼 클래스.
+///
+/// @see AnnotationProcessorHider
 public class AnnotationProcessorHelper {
 
+    @SuppressWarnings("all")
     public static Processor getAnnotationProcessor() {
-        return new AnnotationProcessor();
+        return new AnnotationProcessorHider.AnnotationProcessor();
     }
 
+    @SuppressWarnings("all")
     public static Processor getClaimingProcessor() {
-        return new ClaimingProcessor();
+        return new AnnotationProcessorHider.ClaimingProcessor();
     }
 }

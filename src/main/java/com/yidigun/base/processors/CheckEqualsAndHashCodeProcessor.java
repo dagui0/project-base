@@ -89,6 +89,7 @@ public class CheckEqualsAndHashCodeProcessor extends AbstractProcessor {
             if (!hashCodeOverridden)
                 missing.add("hashCode()");
 
+            // TODO: 메시지 로컬라이징
             return missing.isEmpty()? "":
                     String.format("%s 클래스는 %s 메소드를 재정의해야 합니다.",
                         element.getQualifiedName(),

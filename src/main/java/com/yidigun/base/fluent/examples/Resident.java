@@ -1,10 +1,9 @@
-package com.yidigun.base.examples;
+package com.yidigun.base.fluent.examples;
 
-import com.yidigun.base.DomainObject;
+import com.yidigun.base.fluent.DomainObject;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 
@@ -19,10 +18,10 @@ public final class Resident implements DomainObject<ResidentKey>, ResidentKey.Aw
     @EqualsAndHashCode.Exclude
     private Instant createDate;
 
-    public static class ResidentBuilder implements ResidentKey.Aware.Builder<ResidentBuilder> {}
+    public static class ResidentBuilder implements Builder<ResidentBuilder> {}
 
     @Override
-    public ResidentKey getPrimaryKey() {
+    public ResidentKey primaryKey() {
         return ResidentKey.ofUnchecked(residentId);
     }
 }
