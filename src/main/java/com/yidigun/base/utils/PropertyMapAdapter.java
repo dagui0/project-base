@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /// 값 객체를 [Map] 인터페이스로 전환하는 어댑터.
 ///
-/// 이 어댑터는 Fluent 스타일의 프로퍼티로 설계된 클래스를,
+/// 이 어댑터는 Fluent 스타일의 프로퍼티로 설계된 클래스를
 /// JavaBeans 스타일의 프로퍼티를 요구하는 상황에 간단하게 변환할 목적으로 만들어졌다.
 /// (대부분 JavaBeans 객체를 요구하는 상황에서 [Map] 인터페이스는 호환되기 때문임)
 ///
@@ -19,10 +19,48 @@ import java.util.concurrent.ConcurrentHashMap;
 /// ## 사용 예시
 ///
 /// ```java
-/// if (myObject.createDate() == null)
-///     myObject.createDate(new Instant());
-/// Map<String, Object> map = PropertyMapAdapter.of(myObject);
+/// if (fluentObj.createDate() == null)
+///     fluentObj.createDate(new Instant());
+/// Map<String, Object> map = PropertyMapAdapter.of(fluentObj);
 /// Instant createDate = (Instant) map.get("createDate");
+/// ```
+///
+/// ## 프로퍼티 접근자 판단 기준
+///
+/// * Fluent API
+///   * 메소드명이 필드명과 같은 경우
+///   * 인수가 없고, 반환 자료형이 필드와 동일하면 getter
+///   * 인수가 하나이고, 인수 타입이 필드와 동일하며,
+///     반환 자료형이 `void` 또는 adaptee 클래스와 동일하면 setter
+/// * JavaBeans 스타일
+///   * 메소드명에서 `get`, `is`, `set` 접두사를 제거
+///   * 첫 두글자가 모두 대문자인 경우 그대로 사용 (`getSName()` -> `SName`)
+///   * 그렇지 않은경우 첫 글자를 소문자로 변경 (`getName()` -> `name`, `isValid()` -> `valid`)
+///   * 메소드명에서 프로퍼티명 결정하는 기준은 [java.beans.Introspector#decapitalize(String)]와 같지만,
+///     직접 구현되어 있다. 이는 `java.desktop` 모듈에 속하는 클래스에 대한 의존성을 배제하기 위해서임.
+///
+/// 동일한 프로퍼티로 인식되는 메소드가 여러개 있을 경우 다음과 같은 우선순위로 선택한다.
+///
+/// * Getter
+///   1. Fluid API: 필드명과 동일한 이름(`T name()`)
+///   2. `boolean isFlag()`
+///   3. `T getName()`
+/// * Setter
+///   1. Fluid API: 필드명과 동일한 이름(`자신클래스 name(T value)` 또는 `void name(T value)`)
+///   2. `void setName(T value)`
+///
+/// ```java
+/// class FluentObj {
+///     private boolean valid;
+///
+///     public boolean valid() { ... }      // 1순위
+///     public boolean isValid() { ... }    // 2순위
+///     public Boolean getValid() { ... }   // 3순위
+///
+///     public FluentObj valid(boolean valid) { ... } // 1순위
+///     public void      valid(boolean valid) { ... } // 1순위
+///     public void setValid(Boolean valid) { ... }   // 2순위
+/// }
 /// ```
 ///
 /// ## 프로퍼티 접근자의 유무에 따른 [Map] 메서드 동작
@@ -32,7 +70,7 @@ import java.util.concurrent.ConcurrentHashMap;
 ///   * [Map#put(Object, Object)], [Map.Entry#setValue(Object)]는 무시 (무조건 `null`을 반환)
 /// * read-write 프로퍼티: getter와 setter가 모두 존재하는 경우
 ///   * [Map#get(Object)], [Map#put(Object, Object)], [Map#containsValue(Object)],
-///     [Map.Entry#getValue()], [Map.Entry#setValue(Object)] 모두 의도대로 동작함
+///     [Map.Entry#getValue()], [Map.Entry#setValue(Object)] 모두 [Map] 규약에 맞게 동작함
 /// * read-only 프로퍼티: getter만 존재하는 경우
 ///   * [Map#put(Object, Object)], [Map.Entry#setValue(Object)]는 무시 (무조건 `null`을 반환)
 /// * write-only 프로퍼티: setter만 존재하는 경우
@@ -40,25 +78,9 @@ import java.util.concurrent.ConcurrentHashMap;
 ///   * [Map#put(Object, Object)], [Map.Entry#setValue(Object)]의 경우 기존 값의 존재여부와 무관하게 항상 `null`을 반환
 ///   * [Map#containsValue(Object)]는 확인이 불가능하므로 매치되는 속성값이 있더라도 `false` 반환
 /// * 다음 메소드들에 대해서는 프로퍼티가 존재하는 경우 값을 변경하고(writable 하면), 그렇지 않은 경우 무시한다.
-///   * [Map#putAll(Object)]
+///   * [Map#putAll(Map)]
 ///   * [Map#entrySet()]의 [Set#add(Object)]
 ///   * [Map#entrySet()]의 [Set#addAll(Collection)]
-///
-/// ## Fluent API 접근자 판단 기준
-///
-/// * 메소드명이 필드명과 같은 경우
-/// * 인수가 없고, 반환 자료형이 필드와 동일하면 getter
-/// * 인수가 하나이고, 인수 타입이 필드와 동일하며,
-///   반환 자료형이 `void` 또는 adaptee 클래스와 동일하면 setter
-///
-/// ## JavaBeans 프로퍼티 이름 결정 기준
-///
-/// 메소드명에서 프로퍼티명 결정하는 기준은 [java.beans.Introspector#decapitalize(String)]와 같지만,
-/// 직접 구현되어 있다. 이는 `java.desktop` 모듈에 속하는 클래스에 대한 의존성을 배제하기 위해서임.
-///
-/// * 메소드명에서 `get`, `is`, `set` 접두사를 제거
-/// * 첫 두글자가 모두 대문자인 경우 그대로 사용 (`getSName()` -> `SName`)
-/// * 그렇지 않은경우 첫 글자를 소문자로 변경 (`getName()` -> `name`, `isValid()` -> `valid`)
 ///
 /// ## Lombok과의 호환성
 ///

@@ -20,21 +20,21 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
     }
 
     /// 클래스에 정의된 프로퍼티의 개수를 반환
-    /// @see Collection#size()
+    /// @see Set#size()
     @Override
     public int size() {
         return properties.size();
     }
 
     /// 클래스에 식별 가능한 프로퍼티가 존재하는지 여부
-    /// @see Collection#isEmpty()
+    /// @see Set#isEmpty()
     @Override
     public boolean isEmpty() {
         return properties.isEmpty();
     }
 
     /// 모든 프로퍼티를 순회하는 [Iterator]를 반환
-    /// @see Collection#iterator()
+    /// @see Set#iterator()
     @Override
     public @NotNull Iterator<Map.Entry<String, Object>> iterator() {
         return new Iterator<>() {
@@ -55,7 +55,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
     }
 
     /// 모든 프로퍼티를 배열로 변환
-    /// @see Collection#toArray()
+    /// @see Set#toArray()
     @Override
     public Object @NotNull [] toArray() {
         return properties.values().stream()
@@ -64,7 +64,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
     }
 
     /// 모든 프로퍼티를 배열로 변환
-    /// @see Collection#toArray(T[])
+    /// @see Set#toArray(T[])
     @Override
     public <T> T @NotNull [] toArray(T @NotNull [] a) {
         return properties.values().stream()
@@ -72,14 +72,14 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
                 .toList().toArray(a);
     }
 
-    /// @see Collection#contains(Object)
+    /// @see Set#contains(Object)
     @Override
     public boolean contains(Object o) {
         return properties.values().stream()
                 .anyMatch(p -> Objects.equals(mapper.apply(p), o));
     }
 
-    /// @see Collection#containsAll(Collection)
+    /// @see Set#containsAll(Collection)
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
         return c.stream()
@@ -93,7 +93,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
     /// 아무런 일도 하지 않는다.
     /// @param entry 업데이트할 [Map.Entry] 객체
     /// @return 프로퍼티 값이 변경되었으면 `true`, 그렇지 않으면 `false`
-    /// @see Collection#add(Object))
+    /// @see Set#add(Object))
     @Override
     public boolean add(Map.Entry<String, Object> entry) {
         Property p = properties.get(entry.getKey());
@@ -112,7 +112,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
     /// 아무런 일도 하지 않는다.
     /// @param c 업데이트할 [Map.Entry]의 [Collection] 객체
     /// @return 프로퍼티 값이 하나라도 변경되었으면 `true`, 그렇지 않으면 `false`
-    /// @see Collection#addAll(Collection)
+    /// @see Set#addAll(Collection)
     @Override
     public boolean addAll(@NotNull Collection<? extends Map.Entry<String, Object>> c) {
         return c.stream()
@@ -122,7 +122,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
 
     /// 클래스의 프로퍼티를 삭제할 방법은 없으므로 지원하지 않음
     /// @throws UnsupportedOperationException 항상 발생
-    /// @see Collection#remove(Object)
+    /// @see Set#remove(Object)
     @Override
     public boolean remove(Object o) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Remove operation is not supported");
@@ -130,7 +130,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
 
     /// 클래스의 프로퍼티를 삭제할 방법은 없으므로 지원하지 않음
     /// @throws UnsupportedOperationException 항상 발생
-    /// @see Collection#removeAll(Collection)
+    /// @see Set#removeAll(Collection)
     @Override
     public boolean removeAll(@NotNull Collection<?> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("RemoveAll operation is not supported");
@@ -138,7 +138,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
 
     /// 클래스의 프로퍼티를 삭제할 방법은 없으므로 지원하지 않음
     /// @throws UnsupportedOperationException 항상 발생
-    /// @see Collection#retainAll(Collection)
+    /// @see Set#retainAll(Collection)
     @Override
     public boolean retainAll(@NotNull Collection<?> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("RetainAll operation is not supported");
@@ -146,7 +146,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
 
     /// 클래스의 프로퍼티를 삭제할 방법은 없으므로 지원하지 않음
     /// @throws UnsupportedOperationException 항상 발생
-    /// @see Collection#clear()
+    /// @see Set#clear()
     @Override
     public void clear() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Clear operation is not supported");

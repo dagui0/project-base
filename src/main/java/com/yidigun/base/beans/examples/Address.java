@@ -42,12 +42,17 @@ public class Address implements DomainObject<Address.Key>, MemberKey.Aware {
     /// PrimaryKey 클래스
     /// @param memberNo 회원번호
     /// @param addressNo 주소 일련번호
+    @SuppressWarnings("LombokGetterMayBeUsed")
     public record Key(long memberNo, long addressNo) implements PrimaryKey, MemberKey.Aware {
 
         Key(MemberKey memberKey, long addressNo) {
             this(memberKey.longValue(), addressNo);
         }
 
+        /// 팩토리 메소드
+        /// @param memberKey 회원 키
+        /// @param addressNo 주소 일련번호
+        /// @return 주소 키
         public static Key of(MemberKey memberKey, long addressNo) {
             return new Key(memberKey.longValue(), addressNo);
         }
@@ -55,6 +60,9 @@ public class Address implements DomainObject<Address.Key>, MemberKey.Aware {
         public long getMemberNo() {
             return memberNo;
         }
+
+        /// 주소 일련번호를 반환한다.
+        /// @return 주소 일련번호
         public long getAddressNo() {
             return addressNo;
         }

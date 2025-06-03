@@ -48,6 +48,10 @@ public class Address implements DomainObject<Address.Key>, MemberKey.Aware {
             this(memberKey.longValue(), addressNo);
         }
 
+        /// 팩토리 메소드
+        /// @param memberKey 회원 키
+        /// @param addressNo 주소 일련번호
+        /// @return 주소 키
         public static Key of(MemberKey memberKey, long addressNo) {
             return new Key(memberKey.longValue(), addressNo);
         }

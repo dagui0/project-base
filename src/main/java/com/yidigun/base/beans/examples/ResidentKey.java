@@ -73,9 +73,20 @@ public final class ResidentKey implements PrimaryKey, CharSequence, Comparable<R
         }
     }
 
+    /// 주민등록번호가 유효한지 검사한다.
+    /// @return true: 유효한 주민등록번호, false: 유효하지 않은 주민등록번호
     public boolean isValid() { return isValid(residentId); }
+
+    /// 주민등록번호가 남자인지 검사한다.
+    /// @return true: 남자, false: 여자
     public boolean isMale() { return valueAt(6) % 2 == 1; }
+
+    /// 주민등록번호가 여자인지 검사한다.
+    /// @return true: 여자, false: 남자
     public boolean isFemale() { return valueAt(6) % 2 == 0; }
+
+    /// 주민등록번호의 생년월일을 Instant로 반환한다.
+    /// @return 주민등록번호의 생년월일
     public Instant getBirthday() { return getBirthday(this); }
 
     @Override
@@ -133,20 +144,32 @@ public final class ResidentKey implements PrimaryKey, CharSequence, Comparable<R
                 residentId;
     }
 
+    /// 주민등록번호 문자열의 특정 인덱스에 해당하는 숫자 값을 반환한다.
+    /// @param index 주민등록번호 문자열의 인덱스 (0부터 시작)
+    /// @return 해당 인덱스에 해당하는 숫자 값 (0~9)
     public int valueAt(int index) {
         return Character.getNumericValue(residentId.charAt(index));
     }
 
+    /// 주민등록번호 객체의 유효성을 검사한다.
+    /// @param residentKey 주민등록번호 객체
+    /// @return true: 유효한 주민등록번호, false: 유효하지 않은 주민등록번호
     public static boolean isValid(ResidentKey residentKey) {
         return isValid(residentKey.residentId);
     }
 
+    /// 주민등록번호 문자열의 유효성을 검사한다.
+    /// @param residentId 주민등록번호 문자열
+    /// @return true: 유효한 주민등록번호, false: 유효하지 않은 주민등록번호
     public static boolean isValid(String residentId) {
         return residentId != null &&
                 PATTERN.matcher(residentId).matches() &&
                 hasValidChecksum(residentId);
     }
 
+    /// 주민등록번호 문자열의 유효성을 검사한다.
+    /// @param residentId 주민등록번호 문자열
+    /// @return true: 유효한 주민등록번호, false: 유효하지 않은 주민등록번호
     private static boolean hasValidChecksum(String residentId) {
         int s = 0;
         int[] c = { 2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5 };
@@ -155,14 +178,25 @@ public final class ResidentKey implements PrimaryKey, CharSequence, Comparable<R
         return valueAt(residentId, 12) == ((11 - (s % 11)) % 10);
     }
 
+    /// 주민등록번호 문자열의 특정 인덱스에 해당하는 숫자 값을 반환한다.
+    /// @param residentId 주민등록번호 문자열
+    /// @param index 주민등록번호 문자열의 인덱스 (0부터 시작)
+    /// @return 해당 인덱스에 해당하는 숫자 값 (0~9)
     private static int valueAt(String residentId, int index) {
         return Character.getNumericValue(residentId.charAt(index));
     }
 
+    /// 주민등록번호 객체의 특정 인덱스에 해당하는 숫자 값을 반환한다.
+    /// @param residentKey 주민등록번호 객체
+    /// @param index 주민등록번호 문자열의 인덱스 (0부터 시작)
+    /// @return 해당 인덱스에 해당하는 숫자 값 (0~9)
     private static int valueAt(ResidentKey residentKey, int index) {
         return valueAt(residentKey.residentId, index);
     }
 
+    /// 주민등록번호 문자열로부터 생년월일을 Instant로 반환한다.
+    /// @param residentKey 주민등록번호 객체
+    /// @return 주민등록번호의 생년월일
     public static Instant getBirthday(ResidentKey residentKey)  {
         Calendar cal = Calendar.getInstance();
         int year = Integer.parseInt(residentKey.subSequence(0, 2));
@@ -174,20 +208,39 @@ public final class ResidentKey implements PrimaryKey, CharSequence, Comparable<R
         return cal.toInstant();
     }
 
+    /// 주민등록번호를 사용하는 도메인 객체의 기본키를 정의하는 인터페이스.
     public interface Aware {
+
+        /// [ResidentKey]를 사용하는 도메인 객체의 기본키를 반환한다.
+        /// @return ResidentKey 주민등록번호 객체
         default ResidentKey getResidentKey() {
             return ResidentKey.ofUnchecked(getResidentId());
         }
+
+        /// [ResidentKey]를 사용하는 도메인 객체의 기본키를 Optional로 반환한다.
+        /// @return Optional<ResidentKey> 주민등록번호 객체
         default Optional<ResidentKey> tryGetResidentKey() {
             return ResidentKey.ofNullable(getResidentId());
         }
 
+        /// [ResidentKey]를 사용하는 도메인 객체의 주민등록번호 문자열을 반환한다.
+        /// @return 주민등록번호 문자열
         String getResidentId();
 
+        /// [ResidentKey.Aware] 인터페이스를 구현하는 도메인 객체의 빌더 클래스용 인터페이스
+        /// @param <B> 빌더 클래스 타입
         public interface Builder<B extends Builder<B>> {
+
+            /// [ResidentKey]를 사용하는 도메인 객체의 기본키를 설정한다.
+            /// @param key 주민등록번호 객체
+            /// @return 빌더 인스턴스
             default B residentKey(ResidentKey key) {
                 return residentId(key.getResidentId());
             }
+
+            /// [ResidentKey]를 사용하는 도메인 객체의 주민등록번호 문자열을 설정한다.
+            /// @param residentId 주민등록번호 문자열
+            /// @return 빌더 인스턴스
             B residentId(String residentId);
         }
     }

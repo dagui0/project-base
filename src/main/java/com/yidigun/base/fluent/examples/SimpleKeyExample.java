@@ -47,6 +47,7 @@ public class SimpleKeyExample implements DomainObject<SimpleKeyExample.Key> {
 
     /// [DomainObject]의 [#primaryKey()]에 대응하는 setter 메소드.
     /// @param key PK 값
+    /// @return this 인스턴스
     /// @see DomainObject#primaryKey()
     public SimpleKeyExample primaryKey(Key key) {
         this.no = key.no();

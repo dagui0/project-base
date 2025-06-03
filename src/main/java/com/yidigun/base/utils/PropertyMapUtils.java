@@ -5,7 +5,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 class PropertyMapUtils {
 
@@ -27,7 +28,7 @@ class PropertyMapUtils {
                         f.getDeclaringClass() != Object.class &&
                                 !Modifier.isStatic(f.getModifiers()) &&
                                 !f.isSynthetic())
-                .collect(Collectors.toMap(
+                .collect(toMap(
                         Field::getName,
                         Function.identity(),
                         (existing, replacement) -> existing));
@@ -46,7 +47,7 @@ class PropertyMapUtils {
                 // priority: fluent, isXXX(), then getXXX()
                 Field field = fieldMap.get(m.getName());
                 if (field != null && m.getReturnType() == field.getType()) { // 같은 이름의 필드가 존재
-                    getterMap.merge(m.getName(), m, (e, r) -> r);
+                    getterMap.put(m.getName(), m);
                 }
                 else if (m.getName().startsWith("is") && m.getReturnType() == boolean.class) {
                     tryPropertyNameFromMethodName(m, "is")
@@ -69,7 +70,7 @@ class PropertyMapUtils {
                 Field field = fieldMap.get(m.getName());
                 if (field != null && field.getType() == m.getParameterTypes()[0] &&
                         (m.getReturnType() == clazz || m.getReturnType() == void.class)) {
-                    setterMap.merge(m.getName(), m, (e, r) -> r);
+                    setterMap.put(m.getName(), m);
                 }
                 else if (m.getName().startsWith("set") && m.getReturnType() == void.class) {
                     tryPropertyNameFromMethodName(m, "set")
@@ -114,7 +115,7 @@ class PropertyMapUtils {
         // `get`, `is`, `set` 만 있는 경우 무시
         if (name.isEmpty() || name.equals(prefix))
             return Optional.empty();
-            // `get`, `is`, `set` 접두사
+        // `get`, `is`, `set` 접두사
         else if (name.startsWith(prefix)) {
             name = name.substring(prefix.length());
 

@@ -64,7 +64,7 @@ tasks.withType<Javadoc> {
             charSet = "UTF-8"
             title = "${project.name} ${project.version} API Documentation"
             version = project.version.toString()
-            memberLevel = JavadocMemberLevel.PRIVATE
+            memberLevel = JavadocMemberLevel.PROTECTED
             links = listOf(
                 "https://docs.oracle.com/en/java/javase/${project.ext["java.version"]}/docs/api/",
                 "https://javadoc.io/doc/org.projectlombok/lombok/${project.ext["lombok.version"]}/",

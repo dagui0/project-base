@@ -45,6 +45,10 @@ public final class ComplexKeyExample implements DomainObject<ComplexKeyExample.K
     /// 빌더 클래스에 [#primaryKey(Key)] 메소드를 추가해줄 필요가 있다.
     ///
     public static class ComplexKeyExampleBuilder {
+
+        /// 기본 키를 설정한다.
+        /// @param key 기본 키
+        /// @return 빌더 인스턴스
         public ComplexKeyExampleBuilder primaryKey(Key key) {
             return keyPart1(key.keyPart1())
                   .keyPart2(key.keyPart2());
