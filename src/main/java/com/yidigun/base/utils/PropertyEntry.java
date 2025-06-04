@@ -6,11 +6,11 @@ import java.util.Objects;
 /// 객체 프로퍼티를 이용한 [Map.Entry] 구현체
 /// @see Map.Entry
 class PropertyEntry implements Map.Entry<String, Object> {
-    private final Object adaptee;
+    private final Object target;
     private final Property property;
 
-    PropertyEntry(Object adaptee, Property property) {
-        this.adaptee = adaptee;
+    PropertyEntry(Object target, Property property) {
+        this.target = target;
         this.property = property;
     }
 
@@ -21,12 +21,12 @@ class PropertyEntry implements Map.Entry<String, Object> {
 
     @Override
     public Object getValue() {
-        return property.getValue(adaptee);
+        return property.getValue(target);
     }
 
     @Override
     public Object setValue(Object value) {
-        return property.setValue(adaptee, value);
+        return property.setValue(target, value);
     }
 
     @Override

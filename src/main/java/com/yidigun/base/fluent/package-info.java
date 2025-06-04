@@ -69,5 +69,6 @@
 /// System.out.println(fluentObj.name());           // "새 이름"
 /// ```
 ///
+/// @see <a href="https://medium.com/miro-engineering/fluent-setter-breaking-the-convention-33ce3433126e">Fluent setter: breaking the convention</a>
 /// @see com.yidigun.base.utils.PropertyMapAdapter
 package com.yidigun.base.fluent;

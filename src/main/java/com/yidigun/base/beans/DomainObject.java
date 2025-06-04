@@ -26,7 +26,7 @@ import java.util.Objects;
 /// PK만 비교할 경우 [#getPrimaryKey()]나 [#equalsKeyOnly(Object)]를 사용하고,
 /// 모든 필드를 포함한 비교가 필요한 경우 [#equalsAllFields(Object)]를 사용한다.
 ///
-/// lombok의 [EqualsAndHashCode]를 사용하여 자동 생성을 할 수도 있다.
+/// Lombok의 [EqualsAndHashCode]를 사용하여 자동 생성을 할 수도 있다.
 /// 다만 비교에서 제외할 필드를 분명하게 구분해서 [EqualsAndHashCode.Exclude]를 지정해야 한다.
 ///
 /// ## 단순 키 예시

@@ -9,14 +9,14 @@ import java.util.function.Function;
 /// @see Map#entrySet()
 class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
 
-    final Object adaptee;
+    final Object target;
     final Map<String, Property> properties;
     final Function<Property, Map.Entry<String, Object>> mapper;
 
-    PropertyEntrySet(Object adaptee, Map<String, Property> properties) {
-        this.adaptee = adaptee;
+    PropertyEntrySet(Object target, Map<String, Property> properties) {
+        this.target = target;
         this.properties = properties;
-        this.mapper = p -> new PropertyEntry(adaptee, p);
+        this.mapper = p -> new PropertyEntry(target, p);
     }
 
     /// 클래스에 정의된 프로퍼티의 개수를 반환
@@ -88,8 +88,8 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
                                 .anyMatch(p -> Objects.equals(mapper.apply(p), o)));
     }
 
-    /// adaptee 객체의 클래스에 대한 값을 업데이트한다.
-    /// 만약 제공된 [Map.Entry]의 키가 adaptee 클래스에 정의된 프로퍼티가 아닌 경우
+    /// 대상 객체의 클래스에 대한 값을 업데이트한다.
+    /// 만약 제공된 [Map.Entry]의 키가 대상 클래스에 정의된 프로퍼티가 아닌 경우
     /// 아무런 일도 하지 않는다.
     /// @param entry 업데이트할 [Map.Entry] 객체
     /// @return 프로퍼티 값이 변경되었으면 `true`, 그렇지 않으면 `false`
@@ -98,17 +98,17 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
     public boolean add(Map.Entry<String, Object> entry) {
         Property p = properties.get(entry.getKey());
         if (p != null) {
-            Object oldValue = p.getValue(adaptee);
+            Object oldValue = p.getValue(target);
             if (!Objects.equals(oldValue, entry.getValue())) {
-                p.setValue(adaptee, entry.getValue());
+                p.setValue(target, entry.getValue());
                 return true; // 값이 변경되었으므로 true 반환
             }
         }
         return false;
     }
 
-    /// adaptee 객체의 클래스에 대한 값을 일괄 업데이트한다.
-    /// 만약 제공된 [Map.Entry]의 키가 adaptee 클래스에 정의된 프로퍼티가 아닌 경우
+    /// 대상 객체의 클래스에 대한 값을 일괄 업데이트한다.
+    /// 만약 제공된 [Map.Entry]의 키가 대상 클래스에 정의된 프로퍼티가 아닌 경우
     /// 아무런 일도 하지 않는다.
     /// @param c 업데이트할 [Map.Entry]의 [Collection] 객체
     /// @return 프로퍼티 값이 하나라도 변경되었으면 `true`, 그렇지 않으면 `false`
@@ -152,9 +152,6 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
         throw new UnsupportedOperationException("Clear operation is not supported");
     }
 
-    /// 같은 [Set] 인지 검사한다.
-    /// @param o 비교할 객체
-    /// @return 같은 adaptee 클래스에 대한 entrySet이면 `true`, 그렇지 않으면 `false`
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -163,8 +160,6 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
         return containsAll(set);
     }
 
-    /// [Set]의 해시코드를 계산한다.
-    /// @return adaptee 객체의 해시코드를 반환
     @Override
     public int hashCode() {
         return properties.values().stream()
