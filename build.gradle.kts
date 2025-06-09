@@ -47,7 +47,7 @@ dependencies {
 
 tasks.withType<JavaCompile> {
     options.release.set(project.ext["java.version"] as Int)
-    options.compilerArgs.addAll(listOf("-Xlint:all"))
+    options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-processing"))
 }
 
 tasks.jar {
