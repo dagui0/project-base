@@ -5,15 +5,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 
-/// [Property]를 활용한 [Map#entrySet()] 구현체
+/// [PropertyDefinition]를 활용한 [Map#entrySet()] 구현체
 /// @see Map#entrySet()
-class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
+final class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
 
     final Object target;
-    final Map<String, Property> properties;
-    final Function<Property, Map.Entry<String, Object>> mapper;
+    final Map<String, PropertyDefinition> properties;
+    final Function<PropertyDefinition, Map.Entry<String, Object>> mapper;
 
-    PropertyEntrySet(Object target, Map<String, Property> properties) {
+    PropertyEntrySet(Object target, Map<String, PropertyDefinition> properties) {
         this.target = target;
         this.properties = properties;
         this.mapper = p -> new PropertyEntry(target, p);
@@ -39,7 +39,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
     public @NotNull Iterator<Map.Entry<String, Object>> iterator() {
         return new Iterator<>() {
 
-            private final Iterator<Property> iterator = properties.values().iterator();
+            private final Iterator<PropertyDefinition> iterator = properties.values().iterator();
 
             @Override
             public boolean hasNext() {
@@ -48,8 +48,8 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
 
             @Override
             public Map.Entry<String, Object> next() {
-                Property property = iterator.next();
-                return mapper.apply(property);
+                PropertyDefinition propertyDefinition = iterator.next();
+                return mapper.apply(propertyDefinition);
             }
         };
     }
@@ -96,7 +96,7 @@ class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
     /// @see Set#add(Object))
     @Override
     public boolean add(Map.Entry<String, Object> entry) {
-        Property p = properties.get(entry.getKey());
+        PropertyDefinition p = properties.get(entry.getKey());
         if (p != null) {
             Object oldValue = p.getValue(target);
             if (!Objects.equals(oldValue, entry.getValue())) {

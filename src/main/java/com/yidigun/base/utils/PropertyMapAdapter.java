@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 ///
 /// ## 프로퍼티 접근자 판단 기준
 ///
+/// * [ExportProperty] 어노테이션으로 명시적으로 프로퍼티로 선언된 메소드
 /// * Fluent API
 ///   * 메소드명이 필드명과 같은 경우
 ///   * 인수가 없고, 반환 자료형이 필드와 동일하면 getter
@@ -42,10 +43,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /// 동일한 프로퍼티로 인식되는 메소드가 여러개 있을 경우 다음과 같은 우선순위로 선택한다.
 ///
 /// * Getter
+///   0. [ExportProperty] 어노테이션이 붙은 메소드
 ///   1. Fluid API: 필드명과 동일한 이름(`T name()`)
 ///   2. `boolean isFlag()`
 ///   3. `T getName()`
 /// * Setter
+///   0. [ExportProperty] 어노테이션이 붙은 메소드
 ///   1. Fluid API: 필드명과 동일한 이름(`자신클래스 name(T value)` 또는 `void name(T value)`)
 ///   2. `void setName(T value)`
 ///
@@ -53,15 +56,23 @@ import java.util.concurrent.ConcurrentHashMap;
 /// class FluentObj {
 ///     private boolean valid;
 ///
-///     public boolean valid() { ... }      // 1순위
-///     public boolean isValid() { ... }    // 2순위
-///     public Boolean getValid() { ... }   // 3순위
+///     @ExportProperty("valid")
+///     public String thisIsTheFirstPriorityValidMethod() { ... }      // 1순위
+///     public boolean valid() { ... }      // 2순위
+///     public boolean isValid() { ... }    // 3순위
+///     public Boolean getValid() { ... }   // 4순위
 ///
-///     public FluentObj valid(boolean valid) { ... } // 1순위
-///     public void      valid(boolean valid) { ... } // 1순위
-///     public void setValid(Boolean valid) { ... }   // 2순위
+///     @ExportProperty("valid")
+///     public void thisTheMostPopularMethodToSetValid(String valid) { ... } // 1순위
+///     public FluentObj valid(boolean valid) { ... } // 2순위
+///     public void      valid(boolean valid) { ... } // 2순위
+///     public void setValid(Boolean valid) { ... }   // 3순위
 /// }
 /// ```
+///
+/// 위 규칙에 따라 getter와 setter 메소드를 선택한 후 두 메소드의 자료형이 호환되지 않는 경우
+/// (즉 getter가 `T1 name()`이고 setter가 `void name(T2 value)`와 같은 경우),
+/// setter 메소드는 무시되고 read-only 프로퍼티로 간주된다.
 ///
 /// ## 프로퍼티 접근자의 유무에 따른 [Map] 메서드 동작
 ///
@@ -100,10 +111,10 @@ public final class PropertyMapAdapter implements Map<String, Object> {
     private final Object adaptee;
 
     /// adaptee 클래스에 정의된 프로퍼티 정보를 담는 맵
-    private final Map<String, Property> properties;
+    private final Map<String, PropertyDefinition> properties;
 
     /// 클래스별 프로퍼티 정보를 캐싱하기 위한 [Map]
-    private static final Map<Class<?>, Map<String, Property>> propertiesCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Map<String, PropertyDefinition>> propertiesCache = new ConcurrentHashMap<>();
 
     /// 생성자
     private PropertyMapAdapter(Object adaptee) {
@@ -153,8 +164,8 @@ public final class PropertyMapAdapter implements Map<String, Object> {
     /// adaptee 클래스에 정의된 프로퍼티를 찾는다.
     /// [ConcurrentHashMap]을 활용한 내부 캐시를 사용한다.
     /// @param clazz 프로퍼티를 검색할 클래스
-    /// @return 프로퍼티 이름과 [Property] 객체를 매핑한 [Map]
-    private static Map<String, Property> findProperties(Class<?> clazz) {
+    /// @return 프로퍼티 이름과 [PropertyDefinition] 객체를 매핑한 [Map]
+    private static Map<String, PropertyDefinition> findProperties(Class<?> clazz) {
         return propertiesCache.computeIfAbsent(clazz, PropertyMapUtils::scanPropertiesToMap);
     }
 
@@ -237,7 +248,7 @@ public final class PropertyMapAdapter implements Map<String, Object> {
     @Override
     public boolean containsValue(Object value) {
         return properties.values().stream()
-                .anyMatch(property -> property.containsValue(adaptee, value));
+                .anyMatch(propertyDefinition -> propertyDefinition.containsValue(adaptee, value));
     }
 
     /// 클래스에 존재하는 프로퍼티를 삭제할 방법은 없으므로 이 메소드는 지원하지 않는다.
@@ -273,7 +284,7 @@ public final class PropertyMapAdapter implements Map<String, Object> {
     @Override
     public @NotNull Collection<Object> values() {
         return properties.values().stream()
-                .map(property -> property.getValue(adaptee))
+                .map(propertyDefinition -> propertyDefinition.getValue(adaptee))
                 .toList();
     }
 

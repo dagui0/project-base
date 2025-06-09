@@ -2,6 +2,7 @@ package com.yidigun.base.fluent;
 
 import com.yidigun.base.fluent.examples.ComplexKeyExample;
 import com.yidigun.base.fluent.examples.SimpleKeyExample;
+import com.yidigun.base.utils.ExportProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -146,6 +147,7 @@ public interface DomainObject<K extends PrimaryKey> {
     ///
     /// @return [PrimaryKey]를 구현한 키 객체
     ///
+    @ExportProperty
     K primaryKey();
 
     /// 모든 필드를 비교해야 하는 요구사항이 있는 경우 이 메서드를 사용하도록 한다.

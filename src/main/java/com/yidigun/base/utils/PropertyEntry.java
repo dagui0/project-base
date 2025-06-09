@@ -5,28 +5,28 @@ import java.util.Objects;
 
 /// 객체 프로퍼티를 이용한 [Map.Entry] 구현체
 /// @see Map.Entry
-class PropertyEntry implements Map.Entry<String, Object> {
+final class PropertyEntry implements Map.Entry<String, Object> {
     private final Object target;
-    private final Property property;
+    private final PropertyDefinition propertyDefinition;
 
-    PropertyEntry(Object target, Property property) {
+    PropertyEntry(Object target, PropertyDefinition propertyDefinition) {
         this.target = target;
-        this.property = property;
+        this.propertyDefinition = propertyDefinition;
     }
 
     @Override
     public String getKey() {
-        return property.name();
+        return propertyDefinition.name();
     }
 
     @Override
     public Object getValue() {
-        return property.getValue(target);
+        return propertyDefinition.getValue(target);
     }
 
     @Override
     public Object setValue(Object value) {
-        return property.setValue(target, value);
+        return propertyDefinition.setValue(target, value);
     }
 
     @Override
@@ -39,6 +39,7 @@ class PropertyEntry implements Map.Entry<String, Object> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getKey(), getValue());
+        return (getKey()==null   ? 0 : getKey().hashCode()) ^
+               (getValue()==null ? 0 : getValue().hashCode());
     }
 }

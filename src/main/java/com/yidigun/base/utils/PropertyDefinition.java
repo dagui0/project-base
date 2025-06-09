@@ -8,7 +8,7 @@ import java.util.Objects;
 /// 프로퍼티 정보를 담는 DTO
 ///
 /// @see Map
-record Property(String name, Method getter, Method setter) {
+record PropertyDefinition(String name, Method getter, Method setter) {
 
     public boolean containsValue(Object target, Object value) {
 
@@ -16,13 +16,8 @@ record Property(String name, Method getter, Method setter) {
         if (getter == null) {
             return false;
         }
-        try {
-            Object propertyValue = getter.invoke(target);
-            return Objects.equals(propertyValue, value);
-        } catch (InvocationTargetException e) {
-            throw new PropertyMapException(e.getMessage(), e.getCause());
-        } catch (IllegalAccessException e) {
-            throw new PropertyMapException(e.getMessage(), e);
+        else {
+            return Objects.equals(getValue(target), value);
         }
     }
 
