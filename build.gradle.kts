@@ -13,6 +13,7 @@ ext {
     set("commons.lang3.version", "3.17.0")
     set("junit.version", "5.13.0")
     set("compile.testing.version", "0.21.0")
+    set("slf4j.version", "2.0.17")
 }
 
 group = "com.yidigun"
@@ -27,6 +28,7 @@ dependencies {
     // dependencies
     implementation("org.jetbrains:annotations:${project.ext["jetbrains.annotations.version"]}")
     implementation("org.apache.commons:commons-lang3:${project.ext["commons.lang3.version"]}")
+    implementation("org.slf4j:slf4j-api:${project.ext["slf4j.version"]}")
 
     // Lombok
     compileOnly("org.projectlombok:lombok:${project.ext["lombok.version"]}")
@@ -70,7 +72,8 @@ tasks.withType<Javadoc> {
                 "https://javadoc.io/doc/org.projectlombok/lombok/${project.ext["lombok.version"]}/",
                 "https://javadoc.io/doc/org.jetbrains/annotations/${project.ext["jetbrains.annotations.version"]}/",
                 "https://javadoc.io/doc/com.google.guava/guava/${project.ext["guava.version"]}/",
-                "https://javadoc.io/doc/org.apache.commons/commons-lang3/${project.ext["commons.lang3.version"]}/"
+                "https://javadoc.io/doc/org.apache.commons/commons-lang3/${project.ext["commons.lang3.version"]}/",
+                "https://javadoc.io/doc/org.slf4j/slf4j-api/${project.ext["slf4j.version"]}/",
             )
         }
     }

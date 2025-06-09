@@ -150,6 +150,23 @@ public interface DomainObject<K extends PrimaryKey> {
     @ExportProperty
     K primaryKey();
 
+    /// 의미론적 동등성을 비교하는 메소드.
+    ///
+    /// 캐시나 관리를 위한 필드에 대해서는 동등성 비교에서 제외해야 한다.
+    /// 이 조건은 [#equals(Object)]와 [#hashCode()] 메소드에 동일하게 적용해야 한다.
+    ///
+    /// @param obj 비교할 객체
+    /// @return 두 객체가 의미론적으로 동등하면 true, 아니면 false
+    boolean equals(Object obj);
+
+    /// 의미론적 동등성에 포함될 필드들만으로 계산된 해시코드.
+    ///
+    /// 캐시나 관리를 위한 필드에 대해서는 해시코드 계산에서 제외해야 한다.
+    /// 이 조건은 [#equals(Object)]와 [#hashCode()] 메소드에 동일하게 적용해야 한다.
+    ///
+    /// @return 의미론적 동등성을 나타내는 해시코드 값
+    int hashCode();
+
     /// 모든 필드를 비교해야 하는 요구사항이 있는 경우 이 메서드를 사용하도록 한다.
     ///
     /// [Object#equals(Object)]와 [Object#hashCode()]는
