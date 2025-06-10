@@ -2,6 +2,7 @@ package com.yidigun.base;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /// 오류 코드를 정의하기 위한 기본 인터페이스
@@ -74,6 +75,9 @@ public interface ErrorCode extends Serializable {
     /// 이 클래스는 예외가 ErrorCode를 구현하지 않는 경우에 사용됩니다.
     class ThrowableErrorCode implements ErrorCode {
 
+        @Serial
+        private static final long serialVersionUID = -7513959506284503465L;
+
         private final Throwable cause;
 
         private ThrowableErrorCode(@NotNull Throwable cause) {
@@ -99,6 +103,9 @@ public interface ErrorCode extends Serializable {
     /// 단순 오류 코드 클래스.
     /// 이 클래스는 오류 코드와 메시지를 단순히 저장하는 용도로 사용됩니다.
     class AdHocErrorCode implements ErrorCode {
+
+        @Serial
+        private static final long serialVersionUID = 65540329464005665L;
 
         private final String code;
         private final String message;

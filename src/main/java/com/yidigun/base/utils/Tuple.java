@@ -1,14 +1,22 @@
 package com.yidigun.base.utils;
 
+import java.io.NotSerializableException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /// 여러 개의 값의 묶음을 나타내는 컨테이너 객체.
 /// 여러 값을 묶어서 반환하거나 전달할 때 사용 가능하다.
 ///
+/// 이 객체는 불변(immutable)이며, 생성 후 값이 변경되지 않는다.
+///
+/// 이 객체는 [Serializable]을 구현하여 직렬화가 가능하지만,
+/// 저장된 값 타입들이 직렬화 가능하지 않은 경우 [NotSerializableException]이 발생할 수 있다.
+///
+@SuppressWarnings("serial")
 public class Tuple implements Serializable {
 
     @Serial
@@ -106,6 +114,12 @@ public class Tuple implements Serializable {
     /// @return List 객체로 변환된 값들
     public List<Object> toList() {
         return Arrays.asList(values);
+    }
+
+    /// 튜플의 값을 스트림으로 변환한다.
+    /// @return 값들의 Stream
+    public Stream<Object> stream() {
+        return Arrays.stream(values);
     }
 
     @Override

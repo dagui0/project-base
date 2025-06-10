@@ -1,1 +1,2 @@
 com.yidigun.base.processors.CheckEqualsAndHashCodeProcessor
+com.yidigun.base.processors.ClaimingProcessor

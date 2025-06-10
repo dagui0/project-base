@@ -2,6 +2,7 @@ package com.yidigun.base;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.NotSerializableException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
@@ -13,8 +14,13 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /// 서비스 메소드 또는 API 결과값으로 사용할 수 있는 DTO 클래스.
+///
+/// 이 객체는 [Serializable]을 구현하여 직렬화가 가능하지만,
+/// 저장된 결과 값과 부가정보 데이터의 타입이 직렬화 가능하지 않은 경우
+/// [NotSerializableException]이 발생할 수 있다.
+///
 /// @param <T> 성공시 반환되는 값의 타입
-@SuppressWarnings("LombokGetterMayBeUsed")
+@SuppressWarnings({"LombokGetterMayBeUsed", "serial"})
 public final class Result<T> implements Serializable {
 
     @Serial
