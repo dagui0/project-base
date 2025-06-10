@@ -7,26 +7,26 @@ import java.util.Objects;
 /// @see Map.Entry
 final class PropertyEntry implements Map.Entry<String, Object> {
     private final Object target;
-    private final PropertyHandle propertyHandle;
+    private final PropertyHandle property;
 
-    PropertyEntry(Object target, PropertyHandle propertyHandle) {
+    PropertyEntry(Object target, PropertyHandle property) {
         this.target = target;
-        this.propertyHandle = propertyHandle;
+        this.property = property;
     }
 
     @Override
     public String getKey() {
-        return propertyHandle.name();
+        return property.name();
     }
 
     @Override
     public Object getValue() {
-        return propertyHandle.getValue(target);
+        return property.getValue(target);
     }
 
     @Override
     public Object setValue(Object value) {
-        return propertyHandle.setValue(target, value);
+        return property.setValue(target, value);
     }
 
     @Override

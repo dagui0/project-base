@@ -126,8 +126,8 @@ final class PropertyMapUtils {
                     Class<?> getType = getter.map(Accessor::propertyType).orElse(null);
                     Class<?> setType = setter.map(Accessor::propertyType).orElse(null);
                     if (getType != null && setType != null) {
-                        Class<?> wrappedGetType = wrapType(getType);
-                        Class<?> wrappedSetType = wrapType(setType);
+                        Class<?> wrappedGetType = boxedType(getType);
+                        Class<?> wrappedSetType = boxedType(setType);
                         if (!wrappedGetType.isAssignableFrom(wrappedSetType)) {
                             // setter는 무시하고 getter만 사용
                             // TODO: 경고 로깅
@@ -137,7 +137,7 @@ final class PropertyMapUtils {
 
                     Method getterMethod = getter.map(Accessor::method).orElse(null);
                     Method setterMethod = setter.map(Accessor::method).orElse(null);
-                    return PropertyHandle.of(propertyName, getterMethod, setterMethod, handleType);
+                    return new ReflectionProperty(propertyName, getterMethod, setterMethod);
                 })
                 .filter(Objects::nonNull)
                 .collect(toMap(
@@ -145,11 +145,11 @@ final class PropertyMapUtils {
                         Function.identity(),
                         (e, r) -> e));
 
-        clearCaches(clazz);
+        clearReflectionCaches(clazz);
         return propertyMap;
     }
 
-    private static Class<?> wrapType(Class<?> type) {
+    public static Class<?> boxedType(Class<?> type) {
         return (!type.isPrimitive())? type:
                 switch (type.getName()) {
                     case "int" -> Integer.class;
@@ -164,12 +164,15 @@ final class PropertyMapUtils {
                 };
     }
 
-    private static final Map<Class<?>, Map<String, Field>> fieldMapCache = new ConcurrentHashMap<>();
-    private static final Map<Class<?>, Set<Class<?>>> allIfAndSuperCache = new ConcurrentHashMap<>();
-
-    public static void clearCaches(Class<?> clazz) {
-        fieldMapCache.remove(clazz);
-        allIfAndSuperCache.remove(clazz);
+    public static Class<?> unboxedType(Class<?> type) {
+        return (type == Integer.class)? int.class:
+                (type == Long.class)? long.class:
+                (type == Double.class)? double.class:
+                (type == Float.class)? float.class:
+                (type == Boolean.class)? boolean.class:
+                (type == Character.class)? char.class:
+                (type == Byte.class)? byte.class:
+                (type == Short.class)? short.class: type;
     }
 
     public static Map<String, Field> getFieldMap(Class<?> clazz) {
@@ -349,17 +352,17 @@ final class PropertyMapUtils {
                 (isPossibleSetter(method) && field.getType() == method.getParameterTypes()[0]));
     }
 
-    private static final Map<Class<?>, Map<String, PropertyHandle>> reflectionPropertiesCache = new ConcurrentHashMap<>();
-
-    private static final Map<Class<?>, Map<String, PropertyHandle>> methodHandlePropertiesCache = new ConcurrentHashMap<>();
-
-    private static final Map<Class<?>, Map<String, PropertyHandle>> lambdaPropertiesCache = new ConcurrentHashMap<>();
-
-    private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
-
     /// adaptee 클래스에 정의된 프로퍼티를 찾는다.
+    ///
     /// [ConcurrentHashMap]을 활용한 내부 캐시를 사용한다.
+    ///
+    /// [PropertyMap.AccessMethod#REFLECTION] <-
+    /// [PropertyMap.AccessMethod#METHOD_HANDLE] <-
+    /// [PropertyMap.AccessMethod#LAMBDA_META_FACTORY] 순으로 의존 관계가 있기 때문에,
+    /// 만약 [PropertyMap.AccessMethod#LAMBDA_META_FACTORY]을 사용했다면 3가지 캐시가 모두 생성된다.
+    ///
     /// @param clazz 프로퍼티를 검색할 클래스
+    /// @param method 프로퍼티 접근 방식
     /// @return 프로퍼티 이름과 [PropertyHandle] 객체를 매핑한 [Map]
     public static Map<String, PropertyHandle> findProperties(Class<?> clazz, PropertyMap.AccessMethod method) {
         return switch (method) {
@@ -372,23 +375,17 @@ final class PropertyMapUtils {
     private static Map<String, PropertyHandle> findReflectionProperties(Class<?> clazz) {
         return reflectionPropertiesCache.computeIfAbsent(clazz, k -> {
             Map<String, PropertyHandle> properties = scanPropertiesToMap(k, ReflectionProperty.class);
-            if (properties.isEmpty()) {
-                return Collections.emptyMap();
-            }
-            return Collections.unmodifiableMap(properties);
+            return (properties.isEmpty())? Collections.emptyMap():
+                                Collections.unmodifiableMap(properties);
         });
     }
 
     private static Map<String, PropertyHandle> findMethodHandleProperties(Class<?> clazz) {
         return methodHandlePropertiesCache.computeIfAbsent(clazz, k -> {
             return findReflectionProperties(clazz).values().stream()
-                .map(propertyHandle -> {
-                    try {
-                        return (propertyHandle instanceof ReflectionProperty reflectionProperty) ?
-                                new MethodHandleProperty(reflectionProperty, lookup) : null;
-                    } catch (IllegalAccessException ex) {
-                        throw new PropertyMapException(ex);
-                    }
+                .map(property -> {
+                    return (property instanceof ReflectionProperty reflectionProperty) ?
+                            MethodHandleProperty.of(reflectionProperty, getPrivateLookup(clazz)) : null;
                 })
                 .filter(Objects::nonNull)
                 .collect(toMap(
@@ -401,13 +398,9 @@ final class PropertyMapUtils {
     private static Map<String, PropertyHandle> findLambdaProperties(Class<?> clazz) {
         return lambdaPropertiesCache.computeIfAbsent(clazz, k -> {
             return findMethodHandleProperties(clazz).values().stream()
-                    .map(propertyHandle -> {
-                        try {
-                            return (propertyHandle instanceof MethodHandleProperty mhProperty) ?
-                                    new LambdaProperty(mhProperty, lookup) : null;
-                        } catch (Throwable ex) {
-                            throw new PropertyMapException(ex);
-                        }
+                    .map(property -> {
+                        return (property instanceof MethodHandleProperty mhProperty) ?
+                                LambdaProperty.of(mhProperty, getPrivateLookup(clazz)) : null;
                     })
                     .filter(Objects::nonNull)
                     .collect(toMap(
@@ -415,5 +408,58 @@ final class PropertyMapUtils {
                             Function.identity(),
                             (e, r) -> e));
         });
+    }
+
+    private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
+
+    private static MethodHandles.Lookup getPrivateLookup(Class<?> clazz) {
+        try {
+            return MethodHandles.privateLookupIn(clazz, lookup);
+        } catch (IllegalAccessException e) {
+            throw new PropertyMapException(e);
+        }
+    }
+
+    private static final Map<Class<?>, Map<String, Field>> fieldMapCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Set<Class<?>>> allIfAndSuperCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Map<String, PropertyHandle>> reflectionPropertiesCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Map<String, PropertyHandle>> methodHandlePropertiesCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Map<String, PropertyHandle>> lambdaPropertiesCache = new ConcurrentHashMap<>();
+
+    /// 모든 클래스에 대한 임시 리플렉션 API 캐시를 지운다.
+    /// 클래스 분석이 끝나면 해당 클래스에 대한 캐시를 자동으로 지우므로
+    /// 이 메소드를 별도로 호출할 필요는 없다.
+    public static void clearReflectionCaches() {
+        fieldMapCache.clear();
+        allIfAndSuperCache.clear();
+    }
+
+    /// 지정한 클레스에 대한 임시 리플렉션 API 캐시를 지운다.
+    /// 이 메소드는 분석이 끝나면 자동으로 호출되므로 별도로 호출 할 필요는 없다.
+    /// @param clazz 분석 중 사용된 리플렉션 API 캐시를 지울 클래스
+    public static void clearReflectionCaches(Class<?> clazz) {
+        fieldMapCache.remove(clazz);
+        allIfAndSuperCache.remove(clazz);
+    }
+
+    /// 모든 클래스에 대한 프로퍼티 캐시를 지운다.
+    /// 같은 클래스에 대해서 [PropertyMap]을 새로 생성할 경우 이 캐시가 필요하므로
+    /// 함부로 지우면 성능이 떨어질 수 있다.
+    /// 이 메소드는 메모리 이슈가 있는 경우 사용할 수 있으나 큰 효과가 있지는 않을 것이다.
+    public static void clearPropertiesCaches() {
+        reflectionPropertiesCache.clear();
+        methodHandlePropertiesCache.clear();
+        lambdaPropertiesCache.clear();
+    }
+
+    /// 지정한 클래스에 대한 프로퍼티 캐시를 지운다.
+    /// 같은 클래스에 대해서 [PropertyMap]을 새로 생성할 경우 이 캐시가 필요하므로
+    /// 함부로 지우면 성능이 떨어질 수 있다.
+    /// 이 메소드는 메모리 이슈가 있는 경우 사용할 수 있으나 큰 효과가 있지는 않을 것이다.
+    /// @param clazz 분석 중 사용된 프로퍼티 캐시를 지울 클래스
+    public static void clearPropertiesCaches(Class<?> clazz) {
+        reflectionPropertiesCache.remove(clazz);
+        methodHandlePropertiesCache.remove(clazz);
+        lambdaPropertiesCache.remove(clazz);
     }
 }

@@ -5,20 +5,21 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-class LambdaProperty implements PropertyHandle {
+/// [LambdaMetafactory]I를 이용한 [PropertyHandle] 구현체
+record LambdaProperty(String name, Function<Object, Object> getter, BiConsumer<Object, Object> setter) implements PropertyHandle {
 
-    private final String name;
-    private final Function<Object, Object> getter;
-    private final BiConsumer<Object, Object> setter;
-
-    public LambdaProperty(MethodHandleProperty mhProperty, MethodHandles.Lookup lookup) throws Throwable {
-        this.name = mhProperty.name();
-        this.getter = createGetter(mhProperty, lookup);
-        this.setter = createSetter(mhProperty, lookup);
+    public static LambdaProperty of(MethodHandleProperty mhProperty, MethodHandles.Lookup lookup) {
+        try {
+            return new LambdaProperty(mhProperty.name(),
+                    createGetter(mhProperty, lookup),
+                    createSetter(mhProperty, lookup));
+        } catch (Throwable e) {
+            throw new PropertyMapException(e);
+        }
     }
 
     @SuppressWarnings("unchecked")
-    private Function<Object, Object> createGetter(MethodHandleProperty mhProperty, MethodHandles.Lookup lookup) throws Throwable {
+    private static Function<Object, Object> createGetter(MethodHandleProperty mhProperty, MethodHandles.Lookup lookup) throws Throwable {
         if (mhProperty.getter() == null) {
             return null;
         }
@@ -37,7 +38,7 @@ class LambdaProperty implements PropertyHandle {
     }
 
     @SuppressWarnings("unchecked")
-    private BiConsumer<Object, Object> createSetter(MethodHandleProperty mhProperty, MethodHandles.Lookup lookup) throws Throwable {
+    private static BiConsumer<Object, Object> createSetter(MethodHandleProperty mhProperty, MethodHandles.Lookup lookup) throws Throwable {
         if (mhProperty.setter() == null) {
             return null;
         }
@@ -56,9 +57,6 @@ class LambdaProperty implements PropertyHandle {
         );
         return (BiConsumer<Object, Object>)site.getTarget().invoke();
     }
-
-    @Override
-    public String name() { return name; }
 
     @Override
     public boolean containsValue(Object target, Object value) {

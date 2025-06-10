@@ -4,25 +4,20 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
-class MethodHandleProperty implements PropertyHandle {
+/// MethodHandle API를 이용한 [PropertyHandle] 구현체
+record MethodHandleProperty(String name, MethodHandle getter, MethodHandle setter) implements PropertyHandle {
 
-    private final String name;
-    private final MethodHandle getter;
-    private final MethodHandle setter;
-
-    public MethodHandleProperty(ReflectionProperty reflectionProperty, MethodHandles.Lookup lookup) throws IllegalAccessException {
-        name = reflectionProperty.name();
-        getter = reflectionProperty.getter() == null? null:
-                        lookup.unreflect(reflectionProperty.getter());
-        setter = reflectionProperty.setter() == null? null:
-                        lookup.unreflect(reflectionProperty.setter());
+    public static MethodHandleProperty of(ReflectionProperty reflectionProperty, MethodHandles.Lookup lookup) {
+        try {
+            return new MethodHandleProperty(reflectionProperty.name(),
+                        reflectionProperty.getter() == null? null:
+                            lookup.unreflect(reflectionProperty.getter()),
+                        reflectionProperty.setter() == null? null:
+                            lookup.unreflect(reflectionProperty.setter()));
+        } catch (IllegalAccessException e) {
+            throw new PropertyMapException(e);
+        }
     }
-
-    @Override
-    public String name() { return name; }
-
-    public MethodHandle getter() { return getter; }
-    public MethodHandle setter() { return setter; }
 
     @Override
     public boolean containsValue(Object target, Object value) {

@@ -2,13 +2,26 @@ package com.yidigun.base.utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.Objects;
 
-/// 프로퍼티 정보를 담는 DTO
-///
-/// @see Map
+/// Reflection API를 이용한 [PropertyHandle] 구현체
 record ReflectionProperty(String name, Method getter, Method setter) implements PropertyHandle {
+
+    public ReflectionProperty(String name, Method getter, Method setter) {
+        this.name = name;
+        this.getter = getter;
+        this.setter = setter;
+
+        try {
+            if (getter != null)
+                getter.setAccessible(true);
+            if (setter != null)
+                setter.setAccessible(true);
+        }
+        catch (SecurityException e) {
+            throw new PropertyMapException("Cannot access property: " + name, e);
+        }
+    }
 
     public boolean containsValue(Object target, Object value) {
 

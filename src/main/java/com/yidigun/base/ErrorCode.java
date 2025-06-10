@@ -1,13 +1,13 @@
 package com.yidigun.base;
 
+import com.yidigun.base.utils.HttpStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /// 오류 코드를 정의하기 위한 기본 인터페이스
 ///
-/// @see com.yidigun.base.examples.HttpStatus
+/// @see HttpStatus
 /// @see ApiError
 public interface ErrorCode extends Serializable {
 
@@ -69,75 +69,5 @@ public interface ErrorCode extends Serializable {
     /// @return 성공으로 간주되어야 할 경우 true, 그렇지 않으면 false
     default boolean isSuccess() {
         return success();
-    }
-
-    /// 예외로 부터 오류 코드를 생성하는 클래스.
-    /// 이 클래스는 예외가 ErrorCode를 구현하지 않는 경우에 사용됩니다.
-    class ThrowableErrorCode implements ErrorCode {
-
-        @Serial
-        private static final long serialVersionUID = -7513959506284503465L;
-
-        private final Throwable cause;
-
-        private ThrowableErrorCode(@NotNull Throwable cause) {
-            this.cause = cause;
-        }
-
-        @Override
-        public String code() {
-            return cause.getClass().getSimpleName();
-        }
-
-        @Override
-        public String message() {
-            return cause.getMessage();
-        }
-
-        @Override
-        public boolean success() {
-            return false;
-        }
-    }
-
-    /// 단순 오류 코드 클래스.
-    /// 이 클래스는 오류 코드와 메시지를 단순히 저장하는 용도로 사용됩니다.
-    class AdHocErrorCode implements ErrorCode {
-
-        @Serial
-        private static final long serialVersionUID = 65540329464005665L;
-
-        private final String code;
-        private final String message;
-
-        private AdHocErrorCode() {
-            this.code = "UNKNOWN_ERROR";
-            this.message = null;
-        }
-
-        private AdHocErrorCode(String message) {
-            this.code = "UNKNOWN_ERROR";
-            this.message = message;
-        }
-
-        private AdHocErrorCode(@NotNull String code, String message) {
-            this.code = code;
-            this.message = message;
-        }
-
-        @Override
-        public String code() {
-            return code;
-        }
-
-        @Override
-        public String message() {
-            return (message != null) ? message : "An unknown error occurred.";
-        }
-
-        @Override
-        public boolean success() {
-            return false;
-        }
     }
 }

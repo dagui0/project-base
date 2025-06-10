@@ -1,7 +1,7 @@
 package com.yidigun.base.beans;
 
-import com.yidigun.base.examples.beans.MemberKey;
-import com.yidigun.base.examples.beans.ResidentKey;
+import com.yidigun.base.beans.examples.MemberKey;
+import com.yidigun.base.beans.examples.ResidentKey;
 
 import java.util.Map;
 

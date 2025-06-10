@@ -7,6 +7,7 @@ plugins {
 
 ext {
     set("java.version", "17")
+    set("javadoc.version", "23")
     set("lombok.version", "1.18.38")
     set("jetbrains.annotations.version", "26.0.2")
     set("guava.version", "33.4.8-jre")
@@ -68,6 +69,11 @@ tasks.jar {
 }
 
 tasks.withType<Javadoc> {
+
+    javadocTool.set(javaToolchains.javadocToolFor {
+        languageVersion.set(JavaLanguageVersion.of((project.ext["javadoc.version"] as String? ?: "23").toInt()))
+    })
+
     options {
         if (this is StandardJavadocDocletOptions) {
             encoding = "UTF-8"

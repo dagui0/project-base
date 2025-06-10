@@ -1,7 +1,7 @@
 package com.yidigun.base.fluent;
 
-import com.yidigun.base.examples.fluent.MemberKey;
-import com.yidigun.base.examples.fluent.ResidentKey;
+import com.yidigun.base.fluent.examples.MemberKey;
+import com.yidigun.base.fluent.examples.ResidentKey;
 
 import java.util.Map;
 

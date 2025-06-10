@@ -1,4 +1,4 @@
-package com.yidigun.base.examples.fluent;
+package com.yidigun.base.fluent.examples;
 
 import com.yidigun.base.fluent.DomainObject;
 import com.yidigun.base.fluent.PrimaryKey;

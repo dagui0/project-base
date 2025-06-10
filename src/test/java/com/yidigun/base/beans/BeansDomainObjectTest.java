@@ -1,6 +1,6 @@
 package com.yidigun.base.beans;
 
-import com.yidigun.base.examples.beans.*;
+import com.yidigun.base.beans.examples.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -23,11 +23,7 @@ public class BeansDomainObjectTest {
                 .updateDate(now)
                 .build();
 
-        assertDoesNotThrow(() -> {
-            Thread.sleep(100); // 0.1초 대기
-        });
-
-        Instant now2 = Instant.now();
+        Instant now2 = now.plusMillis(100);
         ComplexKeyExample modified = original.toBuilder()
                 .updateDate(now2)
                 .build();

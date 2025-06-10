@@ -1,4 +1,4 @@
-package com.yidigun.base.examples.beans;
+package com.yidigun.base.beans.examples;
 
 import com.yidigun.base.beans.PrimaryKey;
 import lombok.Getter;

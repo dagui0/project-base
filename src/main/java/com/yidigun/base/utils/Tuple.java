@@ -9,7 +9,24 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /// 여러 개의 값의 묶음을 나타내는 DTO 객체.
-/// 간단하게 여러 값을 묶어서 반환하거나 전달할 때 사용 가능하다.
+/// 간단하게 여러 값을 묶어서 반환하거나 전달할 때 [Object] 배열보다 간편하게 사용할 수 있다.
+///
+/// ```java
+/// Tuple processSomething() {
+///     ...
+///     return Tuple.of(r1, r2, r3, r4, r5, r6);
+/// }
+///
+/// Tuple result = processSomething();
+/// Result1 result1 = result.first(Result1.class);
+/// result.trySecond(Result2.class).ifPresentOrElse(
+///    r2 -> System.out.println("Second result: " + r2),
+///    () -> System.out.println("No second result")
+/// );
+///
+/// // 6번째 이상은 인덱스를 사용해야 한다.
+/// Result6 result6 = result.get(5, Result6.class);
+/// ```
 ///
 /// 이 객체는 불변(immutable)이며, 생성 후 값이 변경되지 않는다.
 ///
@@ -22,8 +39,10 @@ public class Tuple implements Serializable {
     @Serial
     private static final long serialVersionUID = -3044263871932530732L;
 
+    /// 값 배열
     protected final Object[] values;
 
+    /// 생성자
     protected Tuple(Object... values) {
         this.values = new Object[values.length];
         System.arraycopy(values, 0, this.values, 0, values.length);
@@ -94,6 +113,7 @@ public class Tuple implements Serializable {
     /// @param index 반환할 값의 인덱스 (0부터 시작)
     /// @param type 반환할 값의 타입
     /// @return 반환할 값
+    /// @param <T> 반환할 값의 타입
     public <T> T get(int index, Class<T> type) {
         Object value = get(index);
         return (type.isInstance(value))? type.cast(value): null;
@@ -105,6 +125,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 반환할 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T getAs(int index, Class<T> type) throws ClassCastException {
         Object value = get(index);
         if (type.isInstance(value)) {
@@ -126,6 +147,7 @@ public class Tuple implements Serializable {
     /// @param index 반환할 값의 인덱스 (0부터 시작)
     /// @param type 반환할 값의 타입
     /// @return Optional 객체로 감싼 값
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryGet(int index, Class<T> type) {
         Object value = get(index);
         if (type.isInstance(value)) {
@@ -191,6 +213,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 첫번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T first(Class<T> type) { return get(0, type); }
 
     /// 첫번째 값을 반환한다.
@@ -198,6 +221,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 첫번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T firstAs(Class<T> type) throws ClassCastException { return getAs(0, type); }
 
     /// 첫번째 값을 반환한다.
@@ -208,6 +232,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 첫번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryFirst(Class<T> type) { return tryGet(0, type); }
 
     /// 첫번째 값을 반환한다.
@@ -218,6 +243,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 첫번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T getFirst(Class<T> type) { return first(type); }
 
     /// 첫번째 값을 반환한다.
@@ -225,6 +251,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 첫번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T getFirstAs(Class<T> type) throws ClassCastException { return firstAs(type); }
 
     /// 첫번째 값을 반환한다.
@@ -235,6 +262,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 첫번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryGetFirst(Class<T> type) { return tryFirst(type); }
 
     /// 두번째 값을 반환한다.
@@ -245,6 +273,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 두번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T second(Class<T> type) { return get(1, type); }
 
     /// 두번째 값을 반환한다.
@@ -252,6 +281,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 두번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T secondAs(Class<T> type) throws ClassCastException { return getAs(1, type); }
 
     /// 두번째 값을 반환한다.
@@ -262,6 +292,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 두번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> trySecond(Class<T> type) { return tryGet(1, type); }
 
     /// 두번째 값을 반환한다.
@@ -272,6 +303,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 두번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T getSecond(Class<T> type) { return second(type); }
 
     /// 두번째 값을 반환한다.
@@ -279,6 +311,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 두번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T getSecondAs(Class<T> type) throws ClassCastException { return secondAs(type); }
 
     /// 두번째 값을 반환한다.
@@ -289,6 +322,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 두번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryGetSecond(Class<T> type) { return trySecond(type); }
 
     /// 세번째 값을 반환한다.
@@ -299,13 +333,14 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 세번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T third(Class<T> type) { return get(2, type); }
 
     /// 세번째 값을 반환한다.
     /// 자료형이 일치하지 않을 경우 [ClassCastException]을 던진다.
     /// @param type 반환할 값의 타입
     /// @return 세번째 값
-    ///
+    /// @param <T> 반환할 값의 타입
     public <T> T thirdAs(Class<T> type) throws ClassCastException { return getAs(2, type); }
 
     /// 세번째 값을 반환한다.
@@ -316,6 +351,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 세번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryThird(Class<T> type) { return tryGet(2, type); }
 
     /// 세번째 값을 반환한다.
@@ -326,6 +362,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 세번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T getThird(Class<T> type) { return third(type); }
 
     /// 세번째 값을 반환한다.
@@ -333,6 +370,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 세번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T getThirdAs(Class<T> type) throws ClassCastException { return thirdAs(type); }
 
     /// 세번째 값을 반환한다.
@@ -343,6 +381,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 세번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryGetThird(Class<T> type) { return tryThird(type); }
 
     /// 네번째 값을 반환한다.
@@ -353,6 +392,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 네번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T fourth(Class<T> type) { return get(3, type); }
 
     /// 네번째 값을 반환한다.
@@ -360,6 +400,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 네번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T fourthAs(Class<T> type) throws ClassCastException { return getAs(3, type); }
 
     /// 네번째 값을 반환한다.
@@ -370,6 +411,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 네번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryFourth(Class<T> type) { return tryGet(3, type); }
 
     /// 네번째 값을 반환한다.
@@ -380,6 +422,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 네번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T getFourth(Class<T> type) { return fourth(type); }
 
     /// 네번째 값을 반환한다.
@@ -387,6 +430,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 네번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T getFourthAs(Class<T> type) throws ClassCastException { return fourthAs(type); }
 
     /// 네번째 값을 반환한다.
@@ -397,6 +441,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 네번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryGetFourth(Class<T> type) { return tryFourth(type); }
 
     /// 다섯번째 값을 반환한다.
@@ -407,6 +452,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 다섯번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T fifth(Class<T> type) { return get(4, type); }
 
     /// 다섯번째 값을 반환한다.
@@ -414,6 +460,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 다섯번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T fifthAs(Class<T> type) throws ClassCastException { return getAs(4, type); }
 
     /// 다섯번째 값을 반환한다.
@@ -424,6 +471,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 다섯번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryFifth(Class<T> type) { return tryGet(4, type); }
 
     /// 다섯번째 값을 반환한다.
@@ -434,6 +482,7 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 `null`을 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 다섯번째 값
+    /// @param <T> 반환할 값의 타입
     public <T> T getFifth(Class<T> type) { return fifth(type); }
 
     /// 다섯번째 값을 반환한다.
@@ -441,6 +490,7 @@ public class Tuple implements Serializable {
     /// @param type 반환할 값의 타입
     /// @return 다섯번째 값
     /// @throws ClassCastException 자료형이 일치하지 않을 경우
+    /// @param <T> 반환할 값의 타입
     public <T> T getFifthAs(Class<T> type) throws ClassCastException { return fifthAs(type); }
 
     /// 다섯번째 값을 반환한다.
@@ -451,5 +501,6 @@ public class Tuple implements Serializable {
     /// 자료형이 일치하지 않을 경우 [Optional#empty()]를 반환한다.
     /// @param type 반환할 값의 타입
     /// @return 다섯번째 값을 감싼 Optional 객체
+    /// @param <T> 반환할 값의 타입
     public <T> Optional<T> tryGetFifth(Class<T> type) { return tryFifth(type); }
 }

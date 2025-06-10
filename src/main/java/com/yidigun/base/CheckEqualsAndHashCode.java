@@ -122,5 +122,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 @Inherited
+@Documented
 public @interface CheckEqualsAndHashCode {
 }

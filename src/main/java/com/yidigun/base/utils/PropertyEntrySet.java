@@ -48,8 +48,8 @@ final class PropertyEntrySet implements Set<Map.Entry<String, Object>> {
 
             @Override
             public Map.Entry<String, Object> next() {
-                PropertyHandle propertyHandle = iterator.next();
-                return mapper.apply(propertyHandle);
+                PropertyHandle property = iterator.next();
+                return mapper.apply(property);
             }
         };
     }
