@@ -1,7 +1,7 @@
 package com.yidigun.base.fluent;
 
-import com.yidigun.base.fluent.examples.ComplexKeyExample;
-import com.yidigun.base.fluent.examples.SimpleKeyExample;
+import com.yidigun.base.examples.fluent.ComplexKeyExample;
+import com.yidigun.base.examples.fluent.SimpleKeyExample;
 import com.yidigun.base.utils.ExportProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

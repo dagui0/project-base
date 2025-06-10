@@ -19,7 +19,7 @@ import java.util.function.*;
 /// @see CheckEqualsAndHashCode
 /// @see SuppressWarnings
 @SupportedAnnotationTypes("com.yidigun.base.CheckEqualsAndHashCode")
-@SupportedSourceVersion(SourceVersion.RELEASE_23)
+@SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class CheckEqualsAndHashCodeProcessor extends AbstractProcessor {
 
     /// [Object#equals(Object)]또는 [Object#hashCode()]를 구현하지 않은 경우
@@ -40,7 +40,7 @@ public class CheckEqualsAndHashCodeProcessor extends AbstractProcessor {
         EQUALS((m) ->
                 m.getSimpleName().toString().equals("equals") &&
                         m.getParameters().size() == 1 &&
-                        m.getParameters().getFirst().asType().toString().equals("java.lang.Object")
+                        m.getParameters().get(0).asType().toString().equals("java.lang.Object")
         ),
         /// [Object#hashCode()] 또는 재정의한 메소드
         HASH_CODE((m) ->

@@ -1,6 +1,6 @@
-package com.yidigun.base.fluent.examples;
+package com.yidigun.base.examples.beans;
 
-import com.yidigun.base.fluent.DomainObject;
+import com.yidigun.base.beans.DomainObject;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,6 +8,7 @@ import lombok.Getter;
 import java.time.Instant;
 
 /// [ResidentKey] 를 PK로 사용하는 주민등록 도메인 클래스 예시.
+///
 @Getter
 @EqualsAndHashCode
 @Builder(toBuilder = true)
@@ -20,10 +21,10 @@ public final class Resident implements DomainObject<ResidentKey>, ResidentKey.Aw
     private Instant createDate;
 
     /// [ResidentKey] 의 PK 타입 클래스.
-    public static class ResidentBuilder implements Builder<ResidentBuilder> {}
+    public static class ResidentBuilder implements ResidentKey.Aware.Builder<ResidentBuilder> {}
 
     @Override
-    public ResidentKey primaryKey() {
+    public ResidentKey getPrimaryKey() {
         return ResidentKey.ofUnchecked(residentId);
     }
 }

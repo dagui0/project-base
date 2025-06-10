@@ -6,7 +6,7 @@ plugins {
 }
 
 ext {
-    set("java.version", 23)
+    set("java.version", "17")
     set("lombok.version", "1.18.38")
     set("jetbrains.annotations.version", "26.0.2")
     set("guava.version", "33.4.8-jre")
@@ -14,10 +14,18 @@ ext {
     set("junit.version", "5.13.0")
     set("compile.testing.version", "0.21.0")
     set("slf4j.version", "2.0.17")
+    set("project.info.dir", "generated/sources/project-info/java/main")
+    set("project.info.package", "com.yidigun.base")
 }
 
 group = "com.yidigun"
 version = "0.0.1"
+
+// ProjectInfo generation task
+val generateProjectInfoDir = project.layout.buildDirectory.dir(project.ext["project.info.dir"] as String)
+sourceSets.main.get().java.srcDir(generateProjectInfoDir)
+sourceSets.test.get().java.srcDir(generateProjectInfoDir)
+apply(from = "project-info.gradle.kts")
 
 repositories {
     mavenCentral()
@@ -46,17 +54,17 @@ dependencies {
 }
 
 tasks.withType<JavaCompile> {
-    options.release.set(project.ext["java.version"] as Int)
+    options.release.set((project.ext["java.version"] as String? ?: "17").toInt())
     options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-processing"))
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.jar {
     archiveBaseName.set(project.name)
     archiveVersion.set(project.version.toString())
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 tasks.withType<Javadoc> {

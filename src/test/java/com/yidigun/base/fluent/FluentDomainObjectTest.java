@@ -1,6 +1,6 @@
 package com.yidigun.base.fluent;
 
-import com.yidigun.base.fluent.examples.*;
+import com.yidigun.base.examples.fluent.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

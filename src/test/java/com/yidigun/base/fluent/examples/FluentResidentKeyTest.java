@@ -1,5 +1,6 @@
 package com.yidigun.base.fluent.examples;
 
+import com.yidigun.base.examples.fluent.ResidentKey;
 import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;

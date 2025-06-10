@@ -3,7 +3,9 @@ package com.yidigun.base.processors;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
+import com.yidigun.base.ProjectInfo;
 import lombok.launch.AnnotationProcessorHelper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Processor;
@@ -19,11 +21,13 @@ public class CheckEqualsAndHashCodeProcessorTest {
         Processor lombok1 = AnnotationProcessorHelper.getAnnotationProcessor();
         Processor lombok2 = AnnotationProcessorHelper.getClaimingProcessor();
 
-        CheckEqualsAndHashCodeProcessor pr = new CheckEqualsAndHashCodeProcessor();
+        CheckEqualsAndHashCodeProcessor processor = new CheckEqualsAndHashCodeProcessor();
 
         return Compiler.javac()
-                .withProcessors(lombok1, lombok2, pr)
-                .withOptions("-Xlint:all");
+                .withProcessors(lombok1, lombok2, processor)
+                .withOptions("-Xlint:all",
+                        "-Xlint:-processing",
+                        "--release", ProjectInfo.javaReleaseNoString());
     }
 
     @Test
@@ -301,6 +305,7 @@ public class OuterClass {
         assertThat(compilation).succeededWithoutWarnings();
     }
 
+    @Disabled("@SuppressWarnings at package-info.java is supported from Java 19+")
     @Test
     public void testSuppressAtPackage() {
 

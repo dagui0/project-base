@@ -1,4 +1,4 @@
-package com.yidigun.base.beans.examples;
+package com.yidigun.base.examples.beans;
 
 import com.yidigun.base.beans.DomainObject;
 import lombok.Builder;

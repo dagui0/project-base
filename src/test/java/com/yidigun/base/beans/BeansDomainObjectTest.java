@@ -1,6 +1,6 @@
 package com.yidigun.base.beans;
 
-import com.yidigun.base.beans.examples.*;
+import com.yidigun.base.examples.beans.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
