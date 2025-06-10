@@ -6,6 +6,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 /// 서비스 메소드 또는 API 결과값으로 사용할 수 있는 DTO 클래스.
 /// @param <T> 성공시 반환되는 값의 타입
 @SuppressWarnings("LombokGetterMayBeUsed")
-public class Result<T> implements Serializable {
+public final class Result<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 3296269115794774158L;
@@ -70,15 +71,15 @@ public class Result<T> implements Serializable {
     /// @return 실패 결과 객체
     /// @param <T> 반환되는 값의 타입
     public static <T> Result<T> failure() {
-        return new Result<>(null, new ApiError(ErrorCode.UNKNOWN));
+        return failure(new ApiError(ErrorCode.UNKNOWN));
     }
 
     /// 실패 결과 객체를 생성
     /// @param message 오류 메시지
     /// @return 실패 결과 객체
     /// @param <T> 반환되는 값의 타입
-    public static <T> Result<T> failure(String message) {
-        return new Result<>(null, new ApiError(message));
+    public static <T> Result<T> failure(@NotNull String message) {
+        return failure(new ApiError(message));
     }
 
     /// 실패 결과 객체를 생성
@@ -86,8 +87,8 @@ public class Result<T> implements Serializable {
     /// @param cause 예외 원인
     /// @return 실패 결과 객체
     /// @param <T> 반환되는 값의 타입
-    public static <T> Result<T> failure(String message, Throwable cause) {
-        return new Result<>(null, new ApiError(message, cause));
+    public static <T> Result<T> failure(@NotNull String message, @NotNull Throwable cause) {
+        return failure(new ApiError(message, cause));
     }
 
     /// 실패 결과 객체를 생성
@@ -95,33 +96,31 @@ public class Result<T> implements Serializable {
     /// @param errorCode 오류 코드
     /// @return 실패 결과 객체
     /// @param <T> 반환되는 값의 타입
-    public static <T> Result<T> failure(String message, ErrorCode errorCode) {
-        return new Result<>(null, new ApiError(errorCode));
+    public static <T> Result<T> failure(@NotNull String message, @NotNull ErrorCode errorCode) {
+        return failure(new ApiError(message, errorCode));
     }
 
     /// 실패 결과 객체를 생성
     /// @param error 오류 코드
     /// @return 실패 결과 객체
     /// @param <T> 반환되는 값의 타입
-    public static <T> Result<T> failure(ErrorCode error) {
-        return new Result<>(null,
-                (error instanceof ApiError apiError)? apiError: new ApiError(error));
+    public static <T> Result<T> failure(@NotNull ErrorCode error) {
+        return failure((error instanceof ApiError apiError)? apiError: new ApiError(error));
     }
 
     /// 실패 결과 객체를 생성
     /// @param error 예외 원인
     /// @return 실패 결과 객체
     /// @param <T> 반환되는 값의 타입
-    public static <T> Result<T> failure(Throwable error) {
-        return new Result<>(null,
-                (error instanceof ApiError apiError)? apiError: new ApiError(error));
+    public static <T> Result<T> failure(@NotNull Throwable error) {
+        return failure((error instanceof ApiError apiError)? apiError: new ApiError(error));
     }
 
     /// 실패 결과 객체를 생성
     /// @param error ApiError 객체
     /// @return 실패 결과 객체
     /// @param <T> 반환되는 값의 타입
-    public static <T> Result<T> failure(ApiError error) {
+    public static <T> Result<T> failure(@NotNull ApiError error) {
         return new Result<>(null, error);
     }
 
@@ -156,6 +155,59 @@ public class Result<T> implements Serializable {
         return additionalData;
     }
 
+    /// API 응답에 추가할 부가 정보 [Map].
+    /// 부가정보가 추가되지 않았다면 `null`이 될 수 있다.
+    /// @return 부가 정보 [Map]
+    public Map<String, Object> getAdditionalData() {
+        return additionalData;
+    }
+
+    /// API 응답에 포함할 부가 정보를 조회한다.
+    /// @param key 부가 정보의 키
+    /// @return 부가정보 또는 `null`
+    public Object getAdditionalData(String key) {
+        return (additionalData == null)? null : additionalData.get(key);
+    }
+
+    /// API 응답에 포함할 부가 정보를 조회한다.
+    /// 만약 지정한 키의 데이터가 타입과 일치하지 않을 경우 `null`을 반환한다.
+    /// @param key 부가 정보의 키
+    /// @param type 부가 정보의 타입
+    /// @return 부가정보 또는 `null`
+    public <R> R getAdditionalData(String key, Class<R> type) {
+        Object value = getAdditionalData(key);
+        return (type.isInstance(value))? type.cast(value): null;
+    }
+
+    /// API 응답에 포함할 부가 정보를 조회한다.
+    /// 만약 지정한 키의 데이터가 타입과 일치하지 않을 경우 [ClassCastException]을 던진다.
+    /// @param key 부가 정보의 키
+    /// @param type 부가 정보의 타입
+    /// @return 부가정보 데이터
+    /// @throws ClassCastException 지정한 키의 데이터가 타입과 일치하지 않을 경우
+    public <R> R getAdditionalDataAs(String key, Class<R> type) throws ClassCastException {
+        Object value = getAdditionalData(key);
+        if (!type.isInstance(value))
+            throw new ClassCastException("Value for key '" + key + "' is not of type " + type.getName());
+        return type.cast(value);
+    }
+
+    /// API 응답에 포함할 부가 정보를 조회한다.
+    /// @param key 부가 정보의 키
+    /// @return 부가정보를 감싼 [Optional] 객체
+    public Optional<Object> tryGetAdditionalData(String key) {
+        return Optional.ofNullable(getAdditionalData(key));
+    }
+
+    /// API 응답에 포함할 부가 정보를 조회한다.
+    /// 만약 지정한 키의 데이터가 타입과 일치하지 않을 경우 빈 [Optional]을 반환한다.
+    /// @param key 부가 정보의 키
+    /// @param type 부가 정보의 타입
+    /// @return 부가정보를 감싼 [Optional] 객체
+    public <R> Optional<R> tryGetAdditionalData(String key, Class<R> type) {
+        return Optional.ofNullable(getAdditionalData(key, type));
+    }
+
     /// API 응답에 포함할 부가 정보를 추가한다.
     /// @param key 부가 정보의 키
     /// @param value 부가 정보의 값
@@ -166,13 +218,6 @@ public class Result<T> implements Serializable {
         }
         additionalData.put(key, value);
         return this;
-    }
-
-    /// API 응답에 포함할 부가 정보를 조회한다.
-    /// @param key 부가 정보의 키
-    /// @return 부가정보 또는 `null`
-    public Object getAdditionalData(String key) {
-        return (additionalData == null)? null : additionalData.get(key);
     }
 
     /// API 응답에 포함할 부가 정보를 삭제한다.
@@ -255,18 +300,18 @@ public class Result<T> implements Serializable {
     //
 
     /// 성공인 경우 결과값에 대해 지정한 동작을 수행한다.
-    /// @param action 성공시 수행할 동작
-    public void ifSuccess(Consumer<? super T> action) {
+    /// @param successAction 성공시 수행할 동작
+    public void ifSuccess(Consumer<? super T> successAction) {
         if (success()) {
-            action.accept(this.value);
+            successAction.accept(this.value);
         }
     }
 
     /// 실패인 경우 발생한 오류에 대해 지정한 동작을 수행한다.
-    /// @param action 실패시 수행할 동작
-    public void ifFailure(Consumer<? super ApiError> action) {
+    /// @param failureAction 실패시 수행할 동작
+    public void ifFailure(Consumer<? super ApiError> failureAction) {
         if (!success()) {
-            action.accept(this.error);
+            failureAction.accept(this.error);
         }
     }
 

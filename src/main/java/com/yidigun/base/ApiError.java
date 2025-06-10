@@ -1,5 +1,7 @@
 package com.yidigun.base;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -23,7 +25,7 @@ public class ApiError extends RuntimeException implements Serializable, ErrorCod
 
     /// 메시지를 이용하여 단순 오류 생성
     /// @param message 오류 메시지
-    public ApiError(String message) {
+    public ApiError(@NotNull String message) {
         super(message);
         errorCode = ErrorCode.of(message);
     }
@@ -31,14 +33,14 @@ public class ApiError extends RuntimeException implements Serializable, ErrorCod
     /// 메시지와 오류 코드를 이용하여 오류 생성
     /// @param message 오류 메시지
     /// @param errorCode 오류 코드
-    public ApiError(String message, ErrorCode errorCode) {
+    public ApiError(@NotNull String message, @NotNull ErrorCode errorCode) {
         super(message);
         this.errorCode = errorCode;
     }
 
     /// 오류 코드를 이용하여 오류 생성
     /// @param errorCode 오류 코드
-    public ApiError(ErrorCode errorCode) {
+    public ApiError(@NotNull ErrorCode errorCode) {
         super(errorCode.message());
         this.errorCode = errorCode;
     }
@@ -46,14 +48,14 @@ public class ApiError extends RuntimeException implements Serializable, ErrorCod
     /// 메시지와 원인 예외를 이용하여 오류 생성
     /// @param message 오류 메시지
     /// @param cause 원인 예외
-    public ApiError(String message, Throwable cause) {
+    public ApiError(@NotNull String message, @NotNull Throwable cause) {
         super(message, cause);
         errorCode = ErrorCode.of(cause);
     }
 
     /// 원인 예외를 이용하여 오류 생성
     /// @param cause 원인 예외
-    public ApiError(Throwable cause) {
+    public ApiError(@NotNull Throwable cause) {
         super(cause);
         errorCode = ErrorCode.of(cause);
     }

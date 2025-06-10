@@ -13,7 +13,7 @@ public interface ErrorCode extends Serializable {
     /// 단순 오류 코드 생성 팩토리 메서드
     /// @param message 오류 메시지
     /// @return 오류 코드 객체
-    static ErrorCode of(String message) {
+    static ErrorCode of(@NotNull String message) {
         return new AdHocErrorCode(message);
     }
 
@@ -76,7 +76,7 @@ public interface ErrorCode extends Serializable {
 
         private final Throwable cause;
 
-        public ThrowableErrorCode(@NotNull Throwable cause) {
+        private ThrowableErrorCode(@NotNull Throwable cause) {
             this.cause = cause;
         }
 
