@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /// 값 객체를 [Map] 인터페이스로 전환하는 어댑터.
 ///
@@ -105,31 +104,28 @@ import java.util.concurrent.ConcurrentHashMap;
 /// @see Map
 /// @see lombok.experimental.Accessors#fluent
 @SuppressWarnings("LombokGetterMayBeUsed")
-public final class PropertyMapAdapter implements Map<String, Object> {
+final class PropertyMapAdapter implements PropertyMap {
 
     /// [Map] 인터페이스로 변환할 객체
     private final Object adaptee;
 
     /// adaptee 클래스에 정의된 프로퍼티 정보를 담는 맵
-    private final Map<String, PropertyDefinition> properties;
-
-    /// 클래스별 프로퍼티 정보를 캐싱하기 위한 [Map]
-    private static final Map<Class<?>, Map<String, PropertyDefinition>> propertiesCache = new ConcurrentHashMap<>();
+    private final Map<String, PropertyHandle> properties;
 
     /// 생성자
-    private PropertyMapAdapter(Object adaptee) {
+    private PropertyMapAdapter(Object adaptee, AccessMethod method) {
         this.adaptee = adaptee;
-        this.properties = findProperties(adaptee.getClass());
+        this.properties = PropertyMapUtils.findProperties(adaptee.getClass(), method);
     }
 
     /// 어댑터 객체를 생성하는 팩토리 메소드
     /// @param adaptee [Map] 인터페이스로 변환할 객체
     /// @return PropertyMapAdapter 인스턴스
-    public static PropertyMapAdapter of(Object adaptee) {
+    public static PropertyMap of(Object adaptee, AccessMethod method) {
         if (adaptee == null) {
             throw new IllegalArgumentException("Adaptee cannot be null");
         }
-        return new PropertyMapAdapter(adaptee);
+        return new PropertyMapAdapter(adaptee, method);
     }
 
     /// 원본 객체의 참조를 반환
@@ -159,14 +155,6 @@ public final class PropertyMapAdapter implements Map<String, Object> {
     @Override
     public String toString() {
         return adaptee.toString();
-    }
-
-    /// adaptee 클래스에 정의된 프로퍼티를 찾는다.
-    /// [ConcurrentHashMap]을 활용한 내부 캐시를 사용한다.
-    /// @param clazz 프로퍼티를 검색할 클래스
-    /// @return 프로퍼티 이름과 [PropertyDefinition] 객체를 매핑한 [Map]
-    private static Map<String, PropertyDefinition> findProperties(Class<?> clazz) {
-        return propertiesCache.computeIfAbsent(clazz, PropertyMapUtils::scanPropertiesToMap);
     }
 
     /*

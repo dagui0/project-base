@@ -8,7 +8,7 @@ import java.util.Objects;
 /// 프로퍼티 정보를 담는 DTO
 ///
 /// @see Map
-record PropertyDefinition(String name, Method getter, Method setter) {
+record ReflectionProperty(String name, Method getter, Method setter) implements PropertyHandle {
 
     public boolean containsValue(Object target, Object value) {
 

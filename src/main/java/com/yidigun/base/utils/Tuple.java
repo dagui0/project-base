@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/// 여러 개의 값의 묶음을 나타내는 컨테이너 객체.
-/// 여러 값을 묶어서 반환하거나 전달할 때 사용 가능하다.
+/// 여러 개의 값의 묶음을 나타내는 DTO 객체.
+/// 간단하게 여러 값을 묶어서 반환하거나 전달할 때 사용 가능하다.
 ///
 /// 이 객체는 불변(immutable)이며, 생성 후 값이 변경되지 않는다.
 ///
@@ -22,9 +22,9 @@ public class Tuple implements Serializable {
     @Serial
     private static final long serialVersionUID = -3044263871932530732L;
 
-    private final Object[] values;
+    protected final Object[] values;
 
-    private Tuple(Object... values) {
+    protected Tuple(Object... values) {
         this.values = new Object[values.length];
         System.arraycopy(values, 0, this.values, 0, values.length);
     }
@@ -34,6 +34,49 @@ public class Tuple implements Serializable {
     /// @return Tuple 객체
     public static Tuple of(Object... values) {
         return new Tuple(values);
+    }
+
+    /// 현재 튜플 뒤에 새로운 값을 추가하여 새로운 튜플을 반환한다.
+    /// 이 메소드는 현재 튜플을 변경하지 않고, 새로운 튜플을 반환한다.
+    /// 추가할 값이 없으면 현재 튜플을 그대로 반환한다.
+    /// @param values 추가할 값들
+    /// @return 새로운 Tuple 객체
+    public Tuple append(Object... values) {
+        if (values == null || values.length == 0) {
+            return this;
+        }
+        Object[] newValues = new Object[this.values.length + values.length];
+        System.arraycopy(this.values, 0, newValues, 0, this.values.length);
+        System.arraycopy(values, 0, newValues, this.values.length, values.length);
+        return new Tuple(newValues);
+    }
+
+    /// 현재 튜플 뒤에 다른 튜플의 값을 추가하여 새로운 튜플을 반환한다.
+    /// 이 메소드는 현재 튜플을 변경하지 않고, 새로운 튜플을 반환한다.
+    /// 추가할 값이 없으면 현재 튜플을 그대로 반환한다.
+    /// @param tuple 추가할 튜플
+    /// @return 새로운 Tuple 객체
+    public Tuple append(Tuple tuple) {
+        if (tuple == null || tuple.isEmpty()) {
+            return this;
+        }
+        return append(tuple.values);
+    }
+
+    /// 현재 튜플의 일부를 잘라내어 새로운 튜플을 반환한다.
+    /// 지정한 인덱스 범위가 전체 범위일 경우 현재 튜플을 그대로 반환한다.
+    /// @param startIndex 잘라낼 시작 인덱스 (0부터 시작)
+    /// @param endIndex 잘라낼 끝 인덱스 (exclusive, 즉 endIndex는 포함되지 않음)
+    /// @return 새로운 Tuple 객체
+    public Tuple subTuple(int startIndex, int endIndex) {
+        if (startIndex == 0 && endIndex == values.length) {
+            return this; // 전체 튜플을 반환
+        }
+        else if (startIndex < 0 || endIndex > values.length || startIndex >= endIndex) {
+            throw new IndexOutOfBoundsException("Invalid subTuple range: " + startIndex + " to " + endIndex);
+        }
+        Object[] subValues = Arrays.copyOfRange(values, startIndex, endIndex);
+        return new Tuple(subValues);
     }
 
     /// `index`번째 값을 반환한다.

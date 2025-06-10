@@ -19,7 +19,7 @@ public class PropertyMapAdapterTest {
         bean.setActive(true);
         bean.setScore(100);
 
-        PropertyMapAdapter adapter = PropertyMapAdapter.of(bean);
+        PropertyMap adapter = PropertyMap.of(bean);
 
         testEqualsAndHashCode(adapter);
         testToString(adapter);
@@ -65,7 +65,7 @@ public class PropertyMapAdapterTest {
                 active(true).
                 score(100);
 
-        PropertyMapAdapter adapter = PropertyMapAdapter.of(bean);
+        PropertyMap adapter = PropertyMap.of(bean);
 
         testEqualsAndHashCode(adapter);
         testToString(adapter);
@@ -112,7 +112,7 @@ public class PropertyMapAdapterTest {
         bean.setName("John Doe");
         bean.setAge(30);
 
-        PropertyMapAdapter adapter = PropertyMapAdapter.of(bean);
+        PropertyMap adapter = PropertyMap.of(bean);
 
         testEqualsAndHashCode(adapter);
         testToString(adapter);
@@ -160,7 +160,7 @@ public class PropertyMapAdapterTest {
                 .active(true)
                 .score(100);
 
-        PropertyMapAdapter adapter = PropertyMapAdapter.of(bean);
+        PropertyMap adapter = PropertyMap.of(bean);
 
         testEqualsAndHashCode(adapter);
         testToString(adapter);
@@ -213,7 +213,7 @@ public class PropertyMapAdapterTest {
         bean.setScore(100);
         bean.createdAt(createdAt);
 
-        PropertyMapAdapter adapter = PropertyMapAdapter.of(bean);
+        PropertyMap adapter = PropertyMap.of(bean);
 
         Set<String> expectedKeys = Set.of("name", "age", "active", "score", "createdAt");
         assertEquals(expectedKeys, adapter.keySet());
@@ -246,12 +246,12 @@ public class PropertyMapAdapterTest {
         assertEquals(newCreatedAt, bean.createdAt());
     }
 
-    private void testKeySet(PropertyMapAdapter adapter) {
+    private void testKeySet(PropertyMap adapter) {
         Set<String> expectedKeys = Set.of("name", "age", "active", "score");
         assertEquals(expectedKeys, adapter.keySet());
     }
 
-    private void testGetAndPut(PropertyMapAdapter adapter) {
+    private void testGetAndPut(PropertyMap adapter) {
 
         // 프로퍼티 값을 올바르게 읽을 수 있는가?
         assertEquals("John Doe", adapter.get("name"));
@@ -275,7 +275,7 @@ public class PropertyMapAdapterTest {
         });
     }
 
-    private void testEntrySet(PropertyMapAdapter adapter) {
+    private void testEntrySet(PropertyMap adapter) {
 
         // entrySet()을 통해 프로퍼티를 올바르게 읽을 수 있는가?
         for (Map.Entry<String,Object> entry: adapter.entrySet()) {
@@ -309,7 +309,7 @@ public class PropertyMapAdapterTest {
         });
     }
 
-    private void testEqualsAndHashCode(PropertyMapAdapter adapter) {
+    private void testEqualsAndHashCode(PropertyMap adapter) {
 
         Map<String,Object> map = Map.of(
                 "name", "John Doe",
@@ -327,7 +327,7 @@ public class PropertyMapAdapterTest {
         assertEquals(expectedHashCode, adapter.hashCode());
     }
 
-    private void testContainsValue(PropertyMapAdapter adapter) {
+    private void testContainsValue(PropertyMap adapter) {
         assertTrue(adapter.containsValue("John Doe"));
         assertTrue(adapter.containsValue(30));
         assertTrue(adapter.containsValue(true));
@@ -335,7 +335,7 @@ public class PropertyMapAdapterTest {
         assertFalse(adapter.containsValue("NonExistentValue"));
     }
 
-    private void testValuesList(PropertyMapAdapter adapter) {
+    private void testValuesList(PropertyMap adapter) {
         List<Object> expectedValues = List.of(
                 "John Doe",
                 30,
@@ -357,7 +357,7 @@ public class PropertyMapAdapterTest {
                (value == null ? 0 : value.hashCode());
     }
 
-    private void testToString(PropertyMapAdapter adapter) {
+    private void testToString(PropertyMap adapter) {
 
         Object adaptee = adapter.getAdaptee();
         String expectedString = adaptee.getClass().getSimpleName() + "{" +
@@ -369,7 +369,7 @@ public class PropertyMapAdapterTest {
         assertEquals(expectedString, adapter.toString());
     }
 
-    private void testPutAll(PropertyMapAdapter adapter) {
+    private void testPutAll(PropertyMap adapter) {
         Map<String, Object> newValues = Map.of(
                 "name", "Jane Doe",
                 "age", 25,
@@ -396,7 +396,7 @@ public class PropertyMapAdapterTest {
         bean.setVirtualActive(true);
         bean.setVirtualScore(100);
 
-        PropertyMapAdapter adapter = PropertyMapAdapter.of(bean);
+        PropertyMap adapter = PropertyMap.of(bean);
 
         assertEquals("John Doe", adapter.get("virtualName"));
         assertEquals(30, adapter.get("virtualAge"));
@@ -423,7 +423,7 @@ public class PropertyMapAdapterTest {
                 .virtualActive(true)
                 .virtualScore(100);
 
-        PropertyMapAdapter adapter = PropertyMapAdapter.of(bean);
+        PropertyMap adapter = PropertyMap.of(bean);
         Set<String> expectedKeys = Set.of("virtualName", "virtualAge", "virtualActive", "virtualScore");
         assertEquals(expectedKeys, adapter.keySet());
 
@@ -450,7 +450,7 @@ public class PropertyMapAdapterTest {
         bean.setAge(1);
         bean.setActive(false);
 
-        PropertyMapAdapter adapter = PropertyMapAdapter.of(bean);
+        PropertyMap adapter = PropertyMap.of(bean);
 
         assertNull(adapter.get("score"));
         assertTrue(adapter.containsKey("score"));

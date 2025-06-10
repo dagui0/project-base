@@ -1,5 +1,6 @@
 package com.yidigun.base.utils;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -86,8 +87,8 @@ final class PropertyMapUtils {
     /// 4. @ExportProperty annotated (write-only)
     ///
     /// @param clazz 프로퍼티를 검색할 클래스
-    /// @return 프로퍼티 이름과 [PropertyDefinition] 객체를 매핑한 [Map]
-    public static Map<String, PropertyDefinition> scanPropertiesToMap(Class<?> clazz) {
+    /// @return 프로퍼티 이름과 [PropertyHandle] 객체를 매핑한 [Map]
+    public static Map<String, PropertyHandle> scanPropertiesToMap(Class<?> clazz, Class<? extends PropertyHandle> handleType) {
 
         Map<String, List<Accessor>> candidates = Arrays.stream(clazz.getMethods())
                 .filter(m ->
@@ -101,7 +102,7 @@ final class PropertyMapUtils {
                 .flatMap(m -> Accessor.ofNullable(clazz, m).stream())
                 .collect(groupingBy(Accessor::propertyName));
 
-        Map<String,PropertyDefinition> propertyMap = candidates.entrySet().stream()
+        Map<String, PropertyHandle> propertyMap = candidates.entrySet().stream()
                 .map(e -> {
                     String propertyName = e.getKey();
                     List<Accessor> accessors = e.getValue();
@@ -121,27 +122,46 @@ final class PropertyMapUtils {
                         return null;
                     }
 
-                    // getter와 setter의 타입이 다르면 무시
+                    // getter와 setter의 타입이 다르면
                     Class<?> getType = getter.map(Accessor::propertyType).orElse(null);
                     Class<?> setType = setter.map(Accessor::propertyType).orElse(null);
-                    if (getType != null && setType != null && !getType.isAssignableFrom(setType)) {
-                        // setter는 무시하고 getter만 사용
-                        // TODO: 경고 로깅
-                        setter = Optional.empty();
+                    if (getType != null && setType != null) {
+                        Class<?> wrappedGetType = wrapType(getType);
+                        Class<?> wrappedSetType = wrapType(setType);
+                        if (!wrappedGetType.isAssignableFrom(wrappedSetType)) {
+                            // setter는 무시하고 getter만 사용
+                            // TODO: 경고 로깅
+                            setter = Optional.empty();
+                        }
                     }
 
                     Method getterMethod = getter.map(Accessor::method).orElse(null);
                     Method setterMethod = setter.map(Accessor::method).orElse(null);
-                    return new PropertyDefinition(propertyName, getterMethod, setterMethod);
+                    return PropertyHandle.of(propertyName, getterMethod, setterMethod, handleType);
                 })
                 .filter(Objects::nonNull)
                 .collect(toMap(
-                        PropertyDefinition::name,
+                        PropertyHandle::name,
                         Function.identity(),
                         (e, r) -> e));
 
         clearCaches(clazz);
         return propertyMap;
+    }
+
+    private static Class<?> wrapType(Class<?> type) {
+        return (!type.isPrimitive())? type:
+                switch (type.getName()) {
+                    case "int" -> Integer.class;
+                    case "long" -> Long.class;
+                    case "double" -> Double.class;
+                    case "float" -> Float.class;
+                    case "boolean" -> Boolean.class;
+                    case "char" -> Character.class;
+                    case "byte" -> Byte.class;
+                    case "short" -> Short.class;
+                    default -> type; // should not happen
+                };
     }
 
     private static final Map<Class<?>, Map<String, Field>> fieldMapCache = new ConcurrentHashMap<>();
@@ -327,5 +347,73 @@ final class PropertyMapUtils {
         return field != null &&
                 ((isPossibleGetter(method) && field.getType() == method.getReturnType()) ||
                 (isPossibleSetter(method) && field.getType() == method.getParameterTypes()[0]));
+    }
+
+    private static final Map<Class<?>, Map<String, PropertyHandle>> reflectionPropertiesCache = new ConcurrentHashMap<>();
+
+    private static final Map<Class<?>, Map<String, PropertyHandle>> methodHandlePropertiesCache = new ConcurrentHashMap<>();
+
+    private static final Map<Class<?>, Map<String, PropertyHandle>> lambdaPropertiesCache = new ConcurrentHashMap<>();
+
+    private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
+
+    /// adaptee 클래스에 정의된 프로퍼티를 찾는다.
+    /// [ConcurrentHashMap]을 활용한 내부 캐시를 사용한다.
+    /// @param clazz 프로퍼티를 검색할 클래스
+    /// @return 프로퍼티 이름과 [PropertyHandle] 객체를 매핑한 [Map]
+    public static Map<String, PropertyHandle> findProperties(Class<?> clazz, PropertyMap.AccessMethod method) {
+        return switch (method) {
+            case REFLECTION -> findReflectionProperties(clazz);
+            case METHOD_HANDLE -> findMethodHandleProperties(clazz);
+            case LAMBDA_META_FACTORY -> findLambdaProperties(clazz);
+        };
+    }
+
+    private static Map<String, PropertyHandle> findReflectionProperties(Class<?> clazz) {
+        return reflectionPropertiesCache.computeIfAbsent(clazz, k -> {
+            Map<String, PropertyHandle> properties = scanPropertiesToMap(k, ReflectionProperty.class);
+            if (properties.isEmpty()) {
+                return Collections.emptyMap();
+            }
+            return Collections.unmodifiableMap(properties);
+        });
+    }
+
+    private static Map<String, PropertyHandle> findMethodHandleProperties(Class<?> clazz) {
+        return methodHandlePropertiesCache.computeIfAbsent(clazz, k -> {
+            return findReflectionProperties(clazz).values().stream()
+                .map(propertyHandle -> {
+                    try {
+                        return (propertyHandle instanceof ReflectionProperty reflectionProperty) ?
+                                new MethodHandleProperty(reflectionProperty, lookup) : null;
+                    } catch (IllegalAccessException ex) {
+                        throw new PropertyMapException(ex);
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(toMap(
+                        PropertyHandle::name,
+                        Function.identity(),
+                        (e, r) -> e));
+        });
+    }
+
+    private static Map<String, PropertyHandle> findLambdaProperties(Class<?> clazz) {
+        return lambdaPropertiesCache.computeIfAbsent(clazz, k -> {
+            return findMethodHandleProperties(clazz).values().stream()
+                    .map(propertyHandle -> {
+                        try {
+                            return (propertyHandle instanceof MethodHandleProperty mhProperty) ?
+                                    new LambdaProperty(mhProperty, lookup) : null;
+                        } catch (Throwable ex) {
+                            throw new PropertyMapException(ex);
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(toMap(
+                            PropertyHandle::name,
+                            Function.identity(),
+                            (e, r) -> e));
+        });
     }
 }
