@@ -5,11 +5,20 @@ import com.yidigun.base.ErrorCode;
 /// HTTP 상태 코드 정의.
 ///
 /// HTTP 응답 상태 코드는 특정 HTTP 요청이 성공적으로 완료되었는지 알려줍니다.
+///
 /// 응답은 5개의 그룹으로 나누어집니다:
-/// 정보를 제공하는 응답, 성공적인 응답, 리다이렉트, 클라이언트 에러, 그리고 서버 에러.
+///
+/// * `1xx`: 정보를 제공하는 응답
+/// * `2xx`: 성공적인 응답
+/// * `3xx`: 리다이렉트
+/// * `4xx`: 클라이언트 에러
+/// * `5xx`: 서버 에러
+///
 /// 상태 코드는 [section 10 of RFC 2616](https://tools.ietf.org/html/rfc2616#section-10)에 정의되어 있습니다.
 ///
-/// 상태 설명 출처: [MDN Web Docs - HTTP 상태 코드](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status)
+/// (설명 출처: MDN)
+///
+/// @see <a href="https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status">MDN Web Docs - HTTP 상태 코드</a>
 ///
 public enum HttpStatus implements ErrorCode {
 
@@ -223,11 +232,14 @@ public enum HttpStatus implements ErrorCode {
     ///
     /// * 1998년 4월 1일에 만우절 농담으로 릴리즈된
     ///   RFC 2324 "Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0)"에서 제안된 코드
-    /// * 2017 Go 개발팀에서 418 코드를 제거하자는 논의가 시작됨
+    /// * 2017 Go 개발팀에서 시작되어 418 코드를 제거하자는 논의가 진행됨
     /// * 당시 15살의 개발자 셰인 브룬스윅(Shane Brunswick)은 "Save 418" 웹사이트를 만들어서 구명운동을 함
     /// * IETF의 HTTP Working Group에서 418 코드를 제거하지 않기로 결정함
     ///   > "418은 농담이지만, 이미 널리 구현되어 이를 제거하면 기존 코드가 깨질 수 있다"
     /// * RFC 9110 418 코드는 Reserved for "April Fools' Day"라고 정의됨
+    ///
+    /// @see <a href="https://en.wikipedia.org/wiki/Hyper_Text_Coffee_Pot_Control_Protocol">Hyper Text Coffee Pot Control Protocol</a>
+    /// @see <a href="https://save418.com/">The Save 418 Movement</a>
     IM_A_TEAPOT("418", "I'm a teapot"),
 
     /// `421 Misdirected Request`

@@ -3,10 +3,11 @@ package com.yidigun.base;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serial;
+import java.util.Objects;
 
 /// 단순 오류 코드 클래스.
 /// 이 클래스는 오류 코드와 메시지를 단순히 저장하는 용도로 사용됩니다.
-class AdHocErrorCode implements ErrorCode {
+public final class AdHocErrorCode implements ErrorCode {
 
     @Serial
     private static final long serialVersionUID = 65540329464005665L;
@@ -42,5 +43,28 @@ class AdHocErrorCode implements ErrorCode {
     @Override
     public boolean success() {
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AdHocErrorCode that)) return false;
+        return code.equals(that.code()) &&
+                Objects.requireNonNull(message).equals(that.message());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = code.hashCode();
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "AdHocErrorCode{" +
+                "code='" + code + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

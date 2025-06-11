@@ -7,6 +7,13 @@ import java.io.Serializable;
 
 /// 오류 코드를 정의하기 위한 기본 인터페이스
 ///
+/// ```java
+/// public enum DbErrorCode implements ErrorCode {
+///
+///
+/// }
+/// ```
+///
 /// @see HttpStatus
 /// @see ApiError
 public interface ErrorCode extends Serializable {
