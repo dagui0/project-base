@@ -6,15 +6,6 @@ plugins {
 }
 
 ext {
-    set("java.version", "17")
-    set("javadoc.version", "23")
-    set("lombok.version", "1.18.38")
-    set("jetbrains.annotations.version", "26.0.2")
-    set("guava.version", "33.4.8-jre")
-    set("commons.lang3.version", "3.17.0")
-    set("junit.version", "5.13.0")
-    set("compile.testing.version", "0.21.0")
-    set("slf4j.version", "2.0.17")
     set("project.info.dir", "generated/sources/project-info/java/main")
     set("project.info.package", "com.yidigun.base")
 }
@@ -26,7 +17,7 @@ version = "0.0.1"
 val generateProjectInfoDir = project.layout.buildDirectory.dir(project.ext["project.info.dir"] as String)
 sourceSets.main.get().java.srcDir(generateProjectInfoDir)
 sourceSets.test.get().java.srcDir(generateProjectInfoDir)
-apply(from = "project-info.gradle.kts")
+apply(from = "gradle/project-info.gradle.kts")
 
 repositories {
     mavenCentral()
@@ -35,27 +26,27 @@ repositories {
 dependencies {
 
     // dependencies
-    implementation("org.jetbrains:annotations:${project.ext["jetbrains.annotations.version"]}")
-    implementation("org.apache.commons:commons-lang3:${project.ext["commons.lang3.version"]}")
-    implementation("org.slf4j:slf4j-api:${project.ext["slf4j.version"]}")
+    implementation(libs.jetbrains.annotations)
+    implementation(libs.commons.lang3)
+    implementation(libs.slf4j.api)
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:${project.ext["lombok.version"]}")
-    annotationProcessor("org.projectlombok:lombok:${project.ext["lombok.version"]}")
-    testImplementation("org.projectlombok:lombok:${project.ext["lombok.version"]}")
-    testAnnotationProcessor("org.projectlombok:lombok:${project.ext["lombok.version"]}")
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    testImplementation(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 
     // compile testing
-    testImplementation("com.google.guava:guava:${project.ext["guava.version"]}")
-    testImplementation("com.google.testing.compile:compile-testing:${project.ext["compile.testing.version"]}")
+    testImplementation(libs.guava)
+    testImplementation(libs.compile.testing)
 
     // junit
-    testImplementation("org.junit.jupiter:junit-jupiter:${project.ext["junit.version"]}")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.withType<JavaCompile> {
-    options.release.set((project.ext["java.version"] as String? ?: "17").toInt())
+    options.release.set(libs.versions.java.get().toInt())
     options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-processing"))
 }
 
@@ -71,7 +62,7 @@ tasks.jar {
 tasks.withType<Javadoc> {
 
     javadocTool.set(javaToolchains.javadocToolFor {
-        languageVersion.set(JavaLanguageVersion.of((project.ext["javadoc.version"] as String? ?: "23").toInt()))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get().toInt()))
     })
 
     options {
@@ -82,12 +73,12 @@ tasks.withType<Javadoc> {
             version = project.version.toString()
             memberLevel = JavadocMemberLevel.PROTECTED
             links = listOf(
-                "https://docs.oracle.com/en/java/javase/${project.ext["java.version"]}/docs/api/",
-                "https://javadoc.io/doc/org.projectlombok/lombok/${project.ext["lombok.version"]}/",
-                "https://javadoc.io/doc/org.jetbrains/annotations/${project.ext["jetbrains.annotations.version"]}/",
-                "https://javadoc.io/doc/com.google.guava/guava/${project.ext["guava.version"]}/",
-                "https://javadoc.io/doc/org.apache.commons/commons-lang3/${project.ext["commons.lang3.version"]}/",
-                "https://javadoc.io/doc/org.slf4j/slf4j-api/${project.ext["slf4j.version"]}/",
+                "https://docs.oracle.com/en/java/javase/${libs.versions.java.get()}/docs/api/",
+                "https://javadoc.io/doc/org.projectlombok/lombok/${libs.versions.lombok.get()}/",
+                "https://javadoc.io/doc/org.jetbrains/annotations/${libs.versions.jetbrainsAnnotations.get()}/",
+                "https://javadoc.io/doc/com.google.guava/guava/${libs.versions.guava.get()}/",
+                "https://javadoc.io/doc/org.apache.commons/commons-lang3/${libs.versions.commonsLang3.get()}/",
+                "https://javadoc.io/doc/org.slf4j/slf4j-api/${libs.versions.slf4j.get()}/",
             )
         }
     }

@@ -1,0 +1,47 @@
+[versions]
+java = "17"
+javadoc = "23"
+lombok = "1.18.38"
+lombokPlugin = "8.13.1"
+jetbrainsAnnotations = "26.0.2"
+guava = "33.4.8-jre"
+junit = "5.13.0"
+junitPlatform = "1.13.1"
+compileTesting = "0.21.0"
+slf4j = "2.0.17"
+commonsLang3 = "3.17.0"
+springBoot = "3.5.0"
+springDependencyManagement = "1.1.7"
+flyway = "11.9.1"
+h2 = "2.3.232"
+commonsCompress = "1.27.1"
+mapstruct = "1.6.3"
+springdocOpenapi = "2.8.8"
+
+[libraries]
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrainsAnnotations" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+compile-testing = { module = "com.google.testing.compile:compile-testing", version.ref = "compileTesting" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatform" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
+spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "springBoot" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
+spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "springBoot" }
+spring-boot-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+spring-boot-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompress" }
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdocOpenapi" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+lombok = { id = "io.freefair.lombok", version.ref = "lombokPlugin" }

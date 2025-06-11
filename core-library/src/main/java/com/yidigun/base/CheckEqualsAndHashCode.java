@@ -1,7 +1,5 @@
 package com.yidigun.base;
 
-import com.yidigun.base.processors.CheckEqualsAndHashCodeProcessor;
-
 import java.lang.annotation.*;
 
 /// 클래스가 [Object#equals(Object)] 와 [Object#hashCode()]를
@@ -118,7 +116,6 @@ import java.lang.annotation.*;
 /// ```
 ///
 /// @see SuppressWarnings
-/// @see CheckEqualsAndHashCodeProcessor
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 @Inherited
