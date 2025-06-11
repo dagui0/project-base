@@ -19,12 +19,11 @@ public class CheckEqualsAndHashCodeProcessorTest {
     private Compiler getTestCompiler() {
 
         Processor lombok = AnnotationProcessorHelper.getAnnotationProcessor();
+        Processor claiming = AnnotationProcessorHelper.getClaimingProcessor();
 
         CheckEqualsAndHashCodeProcessor processor = new CheckEqualsAndHashCodeProcessor();
-        ClaimingProcessor claimingProcessor = new ClaimingProcessor();
-
         return Compiler.javac()
-                .withProcessors(lombok, processor, claimingProcessor)
+                .withProcessors(lombok, processor, claiming)
                 .withOptions("-Xlint:all",
                         "-Xlint:-processing",
                         "--release", ProjectInfo.javaReleaseNoString());

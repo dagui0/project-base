@@ -1,3 +1,4 @@
+// example-project/build.gradle.kts
 plugins {
     id("java")
     alias(libs.plugins.spring.boot)
@@ -13,6 +14,10 @@ repositories {
 }
 
 dependencies {
+
+    implementation(project(":core-library"))
+    annotationProcessor(project(":annotation-processors"))
+    testAnnotationProcessor(project(":annotation-processors"))
 
     // dependencies
     implementation(libs.jetbrains.annotations)

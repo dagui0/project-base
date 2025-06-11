@@ -16,7 +16,7 @@ public class PropertyMapAdapterPropManipulationTest {
         bean.setName("John");
         bean.setAge(30);
 
-        Map<String, Object> adapter = PropertyMap.of(bean);
+        Map<String, Object> adapter = PropertyMaps.of(bean);
 
         adapter.put("email", "a@b.com");
         assertFalse(adapter.containsKey("email"));
@@ -45,7 +45,7 @@ public class PropertyMapAdapterPropManipulationTest {
         bean.setName("John");
         bean.setAge(30);
 
-        Map<String, Object> adapter = PropertyMap.of(bean);
+        Map<String, Object> adapter = PropertyMaps.of(bean);
 
         assertThrows(UnsupportedOperationException.class, () -> adapter.remove("name"));
 
@@ -59,7 +59,7 @@ public class PropertyMapAdapterPropManipulationTest {
         bean.setName("John");
         bean.setAge(30);
 
-        Map<String, Object> adapter = PropertyMap.of(bean);
+        Map<String, Object> adapter = PropertyMaps.of(bean);
         assertThrows(UnsupportedOperationException.class, adapter::clear);
         assertThrows(UnsupportedOperationException.class, adapter.entrySet()::clear);
     }
@@ -70,7 +70,7 @@ public class PropertyMapAdapterPropManipulationTest {
         bean.setName("John");
         bean.setAge(30);
 
-        Map<String, Object> adapter = PropertyMap.of(bean);
+        Map<String, Object> adapter = PropertyMaps.of(bean);
 
         Set<Map.Entry<String, Object>> toRemove = Set.of(
                 new AbstractMap.SimpleEntry<>("name", "John"),

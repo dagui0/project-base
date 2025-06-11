@@ -1,6 +1,7 @@
 package com.yidigun.base.beans.examples;
 
 import com.yidigun.base.beans.DomainObject;
+
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

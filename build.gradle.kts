@@ -5,19 +5,14 @@ plugins {
     id("maven-publish")
 }
 
-ext {
-    set("project.info.dir", "generated/sources/project-info/java/main")
-    set("project.info.package", "com.yidigun.base")
-}
-
 group = "com.yidigun"
 version = "0.0.1"
 
-// ProjectInfo generation task
-val generateProjectInfoDir = project.layout.buildDirectory.dir(project.ext["project.info.dir"] as String)
-sourceSets.main.get().java.srcDir(generateProjectInfoDir)
-sourceSets.test.get().java.srcDir(generateProjectInfoDir)
-apply(from = "gradle/project-info.gradle.kts")
+ext {
+    set("java.version", libs.versions.java.get())
+    set("project.info.dir", "generated/sources/project-info/java/main")
+    set("project.info.package", "com.yidigun.base")
+}
 
 repositories {
     mavenCentral()
@@ -26,9 +21,7 @@ repositories {
 dependencies {
 
     // dependencies
-    implementation(libs.jetbrains.annotations)
-    implementation(libs.commons.lang3)
-    implementation(libs.slf4j.api)
+    compileOnly(libs.jetbrains.annotations)
 
     // Lombok
     compileOnly(libs.lombok)

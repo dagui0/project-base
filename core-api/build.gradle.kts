@@ -1,11 +1,16 @@
-// core-library/build.gradle.kts
+// core-api/build.gradle.kts
 plugins {
     id("java-library")
-    alias(libs.plugins.lombok)
 }
 
 group = rootProject.group
 version = rootProject.version
+
+// generateProjectInfo task
+val generateProjectInfoDir = project.layout.buildDirectory.dir(rootProject.ext["project.info.dir"] as String)
+sourceSets.main.get().java.srcDir(generateProjectInfoDir)
+sourceSets.test.get().java.srcDir(generateProjectInfoDir)
+apply(from = "project-info.gradle.kts")
 
 repositories {
     mavenCentral()
@@ -13,21 +18,12 @@ repositories {
 
 dependencies {
 
-    implementation(project(":core-api"))
-    annotationProcessor(project(":annotation-processors"))
-    testAnnotationProcessor(project(":annotation-processors"))
-
     // dependencies
     compileOnlyApi(libs.jetbrains.annotations)
     implementation(libs.commons.lang3)
-    implementation(libs.slf4j.api)
 
     // Lombok
-    lombok(libs.lombok)
-
-    // junit
-    testImplementation(libs.junit.jupiter)
-    testRuntimeOnly(libs.junit.platform.launcher)
+    compileOnly(libs.lombok)
 }
 
 tasks.withType<JavaCompile> {
@@ -36,5 +32,5 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    enabled = false
 }

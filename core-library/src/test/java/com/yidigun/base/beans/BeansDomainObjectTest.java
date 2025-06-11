@@ -69,7 +69,7 @@ public class BeansDomainObjectTest {
         });
     }
 
-    private <K extends PrimaryKey & Comparable<K>, V extends DomainObject<K>>
+    private <K extends Comparable<K> & PrimaryKey, V extends DomainObject<K>>
         void testGenericType(K key, V value) {
 
         Map<K, V> map = new TreeMap<>();
@@ -131,22 +131,20 @@ public class BeansDomainObjectTest {
         String residentId = "1111111111118";
         ResidentKey key1 = ResidentKey.of("1111111111118");
 
+        Instant now = Instant.now();
         Resident resident1 = Resident.builder()
                 .residentKey(key1)
                 .name("홍길동")
                 .address("서울시 강남구")
-                .createDate(Instant.now())
+                .createDate(now)
                 .build();
 
-        assertDoesNotThrow(() -> {
-            Thread.sleep(100); // 0.1초 대기
-        });
-
+        Instant now2 = now.plusMillis(100);
         Resident resident2 = Resident.builder()
                 .residentId("1111111111118")
                 .name("홍길동")
                 .address("서울시 강남구")
-                .createDate(Instant.now())
+                .createDate(now2)
                 .build();
 
         assertEquals(resident1, resident2);
@@ -155,7 +153,8 @@ public class BeansDomainObjectTest {
         assertEquals("111111", resident1.getResidentKey().subSequence(0, 6));
 
         Calendar cal = Calendar.getInstance();
-        cal.set(1911, 10, 11);
+        cal.set(1911, 10, 11, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         assertEquals(cal.toInstant(), resident1.getResidentKey().getBirthday());
     }
 }

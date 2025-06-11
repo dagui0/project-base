@@ -1,7 +1,4 @@
-package com.yidigun.base.beans;
-
-import com.yidigun.base.beans.examples.MemberKey;
-import com.yidigun.base.beans.examples.ResidentKey;
+package com.yidigun.base.fluent;
 
 import java.util.Map;
 
@@ -34,13 +31,13 @@ import java.util.Map;
 ///         }
 ///     }
 ///     @Override
-///     public Key getPrimaryKey() {
+///     public Key primaryKey() {
 ///        return new Key(no);
 ///     }
 /// }
 /// 
 /// TreeMap<Example.Key, Example> map = new TreeMap<>();
-/// map.put(example.getPrimaryKey(), example);
+/// map.put(example.primaryKey(), example);
 /// ```
 ///
 /// ### [CharSequence] 구현
@@ -102,7 +99,7 @@ import java.util.Map;
 /// public class Member implements DomainObject<MemberKey>, MemberKey.Aware {
 ///     private long memberNo; // primary key
 ///     ...
-///     public MemberKey getPrimaryKey() { return MemberKey.of(memberNo); }
+///     public MemberKey primaryKey() { return MemberKey.of(memberNo); }
 ///     ...
 ///     public static class MemberBuilder implements MemberKey.Aware.Builder<MemberBuilder> {}
 ///     ...
@@ -115,7 +112,7 @@ import java.util.Map;
 ///     private long memberNo; // primary key from foreign table
 ///     private long addressNo; // primary key
 ///     ...
-///     public Address.Key getPrimaryKey() { return new Address.Key(memberNo, addressNo); }
+///     public Address.Key primaryKey() { return new Address.Key(memberNo, addressNo); }
 ///     ...
 ///     // Address.Key 역시 MemberKey.Aware임
 ///     // 단, record 클래스에는 @Getter를 붙일 수 없다.
@@ -140,7 +137,7 @@ import java.util.Map;
 ///     private String content; // semantic field
 ///     private long memberNo; // semantic field from Member
 ///     ...
-///     @Override public Post.Key getPrimaryKey() { return new Post.Key(postNo); }
+///     @Override public Post.Key primaryKey() { return new Post.Key(postNo); }
 ///     public record Key(long postNo) implements PrimaryKey {}
 ///     public static class PostBuilder implements MemberKey.Aware.Builder<PostBuilder> {}
 ///     ...
@@ -148,7 +145,5 @@ import java.util.Map;
 /// ```
 /// 
 /// @see DomainObject DomainObject(도메인 객체 인터페이스)
-/// @see MemberKey MemberKey(독립 클래스방식 구현 예시)
-/// @see ResidentKey ResidendId(Semantic Key 예시 (주민등록번호))
 public interface PrimaryKey {
 }

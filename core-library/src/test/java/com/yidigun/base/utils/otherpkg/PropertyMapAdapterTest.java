@@ -2,6 +2,7 @@ package com.yidigun.base.utils.otherpkg;
 
 import com.yidigun.base.utils.ExportProperty;
 import com.yidigun.base.utils.PropertyMap;
+import com.yidigun.base.utils.PropertyMaps;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -21,7 +22,7 @@ public class PropertyMapAdapterTest {
         bean.setActive(true);
         bean.setScore(100);
 
-        PropertyMap adapter = PropertyMap.of(bean);
+        PropertyMap adapter = PropertyMaps.of(bean);
 
         testEqualsAndHashCode(adapter);
         testToString(adapter);
@@ -67,7 +68,7 @@ public class PropertyMapAdapterTest {
                 active(true).
                 score(100);
 
-        PropertyMap adapter = PropertyMap.of(bean);
+        PropertyMap adapter = PropertyMaps.of(bean);
 
         testEqualsAndHashCode(adapter);
         testToString(adapter);
@@ -114,7 +115,7 @@ public class PropertyMapAdapterTest {
         bean.setName("John Doe");
         bean.setAge(30);
 
-        PropertyMap adapter = PropertyMap.of(bean);
+        PropertyMap adapter = PropertyMaps.of(bean);
 
         testEqualsAndHashCode(adapter);
         testToString(adapter);
@@ -162,7 +163,7 @@ public class PropertyMapAdapterTest {
                 .active(true)
                 .score(100);
 
-        PropertyMap adapter = PropertyMap.of(bean);
+        PropertyMap adapter = PropertyMaps.of(bean);
 
         testEqualsAndHashCode(adapter);
         testToString(adapter);
@@ -215,7 +216,7 @@ public class PropertyMapAdapterTest {
         bean.setScore(100);
         bean.createdAt(createdAt);
 
-        PropertyMap adapter = PropertyMap.of(bean);
+        PropertyMap adapter = PropertyMaps.of(bean);
 
         Set<String> expectedKeys = Set.of("name", "age", "active", "score", "createdAt");
         assertEquals(expectedKeys, adapter.keySet());
@@ -398,7 +399,7 @@ public class PropertyMapAdapterTest {
         bean.setVirtualActive(true);
         bean.setVirtualScore(100);
 
-        PropertyMap adapter = PropertyMap.of(bean);
+        PropertyMap adapter = PropertyMaps.of(bean);
 
         assertEquals("John Doe", adapter.get("virtualName"));
         assertEquals(30, adapter.get("virtualAge"));
@@ -425,7 +426,7 @@ public class PropertyMapAdapterTest {
                 .virtualActive(true)
                 .virtualScore(100);
 
-        PropertyMap adapter = PropertyMap.of(bean);
+        PropertyMap adapter = PropertyMaps.of(bean);
         Set<String> expectedKeys = Set.of("virtualName", "virtualAge", "virtualActive", "virtualScore");
         assertEquals(expectedKeys, adapter.keySet());
 
@@ -452,7 +453,7 @@ public class PropertyMapAdapterTest {
         bean.setAge(1);
         bean.setActive(false);
 
-        PropertyMap adapter = PropertyMap.of(bean);
+        PropertyMap adapter = PropertyMaps.of(bean);
 
         assertNull(adapter.get("score"));
         assertTrue(adapter.containsKey("score"));

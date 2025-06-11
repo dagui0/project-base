@@ -10,7 +10,7 @@ public class PropertyMapAdapterPartialPropsTest {
     public void testReadOnlyProperty() {
         ReadOnlyProperty property = new ReadOnlyProperty("test");
 
-        PropertyMap adapter = PropertyMap.of(property);
+        PropertyMap adapter = PropertyMaps.of(property);
 
         assertTrue(adapter.containsKey("name"));
         adapter.put("name", "newName");
@@ -21,7 +21,7 @@ public class PropertyMapAdapterPartialPropsTest {
     public void testWriteOnlyProperty() {
         WriteOnlyProperty property = new WriteOnlyProperty("test");
 
-        PropertyMap adapter = PropertyMap.of(property);
+        PropertyMap adapter = PropertyMaps.of(property);
 
         assertTrue(adapter.containsKey("name"));
         adapter.put("name", "newName");

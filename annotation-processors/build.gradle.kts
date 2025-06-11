@@ -1,3 +1,4 @@
+// annotation-processors/build.gradle.kts
 plugins {
     id("java-library")
     alias(libs.plugins.lombok)
@@ -12,8 +13,7 @@ repositories {
 
 dependencies {
 
-    implementation(project(":core-library"))
-    testImplementation(project(":core-library"))
+    implementation(project(":core-api"))
 
     // dependencies
     implementation(libs.jetbrains.annotations)

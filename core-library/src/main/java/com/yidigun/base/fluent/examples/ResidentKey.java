@@ -204,7 +204,8 @@ public final class ResidentKey implements PrimaryKey, CharSequence, Comparable<R
         int day = Integer.parseInt(residentKey.subSequence(4, 6));
         int sex = valueAt(residentKey, 6);
         year += (sex == 3 || sex == 4 || sex == 7 || sex == 8)? 2000: 1900;
-        cal.set(year, month - 1, day);
+        cal.set(year, month - 1, day, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         return cal.toInstant();
     }
 

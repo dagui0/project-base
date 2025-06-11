@@ -52,11 +52,11 @@ tasks.register<GenerateProjectInfoTask>("generateProjectInfo") {
     group = "build"
     description = "Generates the ProjectInfo class from project properties."
 
-    packageName.set(project.findProperty("project.info.package") as String? ?: "")
-    javaVersion.set(project.findProperty("java.version") as String? ?: "17")
-    projectGroup.set(project.group.toString())
-    projectName.set(project.name)
-    projectVersion.set(project.version.toString())
+    packageName.set(rootProject.findProperty("project.info.package") as String? ?: "")
+    javaVersion.set(rootProject.findProperty("java.version") as String? ?: "17")
+    projectGroup.set(rootProject.group.toString())
+    projectName.set(rootProject.name.toString())
+    projectVersion.set(rootProject.version.toString())
     val outputPath = project.findProperty("project.info.dir") as String? ?: "generated/sources/project-info/java/main"
     outputDir.set(project.layout.buildDirectory.dir(outputPath))
 }

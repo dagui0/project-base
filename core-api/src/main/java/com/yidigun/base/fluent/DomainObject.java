@@ -1,7 +1,6 @@
-package com.yidigun.base.beans;
+package com.yidigun.base.fluent;
 
-import com.yidigun.base.beans.examples.ComplexKeyExample;
-import com.yidigun.base.beans.examples.SimpleKeyExample;
+import com.yidigun.base.utils.ExportProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -23,7 +22,7 @@ import java.util.Objects;
 /// * 유의미한 값 필드(이름, 주소 등)만 포함
 /// * 로그 필드(생성일, 수정일 등)나 캐싱용 필드 등은 제외한다.
 ///
-/// PK만 비교할 경우 [#getPrimaryKey()]나 [#equalsKeyOnly(Object)]를 사용하고,
+/// PK만 비교할 경우 [#primaryKey()]나 [#equalsKeyOnly(Object)]를 사용하고,
 /// 모든 필드를 포함한 비교가 필요한 경우 [#equalsAllFields(Object)]를 사용한다.
 ///
 /// Lombok의 [EqualsAndHashCode]를 사용하여 자동 생성을 할 수도 있다.
@@ -32,7 +31,7 @@ import java.util.Objects;
 /// ## 단순 키 예시
 ///
 /// [PrimaryKey]인터페이스를 구현한 중첩 클래스(record) `SimpleKeyExample.Key`를 사용하여 구현하였다.
-/// [#getPrimaryKey()]에 대응하는 `setPrimaryKey(SimpleKeyExample.Key key)` 메소드를 구현해 주었다.
+/// [#primaryKey()]에 대응하는 `primaryKey(SimpleKeyExample.Key key)` 메소드를 구현해 주었다.
 ///
 /// ```
 /// @Getter
@@ -50,15 +49,15 @@ import java.util.Objects;
 ///        public int compareTo(@NotNull Key o) { return Integer.compare(this.no, o.no()); }
 ///     }
 ///     @Override
-///     public Key getPrimaryKey() { return new Key(no); }
-///     public void setPrimaryKey(Key key) { this.no = key.no(); }
+///     public Key primaryKey() { return new Key(no); }
+///     public void primaryKey(Key key) { this.no = key.no(); }
 /// }
 /// ```
 ///
 /// ### 복합 키 예시
 ///
 /// 단순 키의 경우도 마찬가지지만,
-/// 복합 키의 경우는 PK 타입인 [ComplexKeyExample.Key]는 단일 값으로 취급되어야 하므로
+/// 복합 키의 경우는 PK 타입인 `ComplexKeyExample.Key`는 단일 값으로 취급되어야 하므로
 /// setter 메소드나 빌더 메소드를 반드시 추가해주는 것이 필요하다.
 ///
 /// ```
@@ -78,7 +77,7 @@ import java.util.Objects;
 ///         }
 ///     }
 ///     @Override
-///     public Key getPrimaryKey() {
+///     public Key primaryKey() {
 ///         return new Key(keyPart1, keyPart2);
 ///     }
 ///     ...
@@ -90,15 +89,15 @@ import java.util.Objects;
 ///         .otherField1("field1")
 ///         .otherField2("field2").build();
 /// ComplexKeyExample ex2 = ComplexKeyExample.builder()
-///         .primaryKey(ex1.getPrimaryKey())  // PK 객체로 생성
+///         .primaryKey(ex1.primaryKey())  // PK 객체로 생성
 ///         .otherField1("field1")
 ///         .otherField2("field2").build();
 /// ```
 ///
 /// ## [Builder]를 사용한 불변 클래스
 ///
-/// [SimpleKeyExample]은 불변객체가 아니고 setter 메소드를 제공하지만,
-/// [ComplexKeyExample]은 불변객체(모든 필드가 `final`)이고 빌더 패턴을 통해서 초기화하도록 하고 있다.
+/// `SimpleKeyExample`은 불변객체가 아니고 setter 메소드를 제공하지만,
+/// `ComplexKeyExample`은 불변객체(모든 필드가 `final`)이고 빌더 패턴을 통해서 초기화하도록 하고 있다.
 ///
 /// 기본적으로 값 객체는 불변 클래스로 만드는 것이 좋다.
 ///
@@ -138,15 +137,14 @@ import java.util.Objects;
 ///
 /// @param <K> Primary Key 필드를 나타내는 타입
 /// @see PrimaryKey
-/// @see ComplexKeyExample ComplexKeyExample(복합키 도메인 객체 예시)
-/// @see SimpleKeyExample SimpleKeyExample(단순키 도메인 객체 예시)
 public interface DomainObject<K extends PrimaryKey> {
 
     /// [PrimaryKey]를 구현한 키 객체를 반환한다.
     ///
     /// @return [PrimaryKey]를 구현한 키 객체
     ///
-    K getPrimaryKey();
+    @ExportProperty
+    K primaryKey();
 
     /// 의미론적 동등성을 비교하는 메소드.
     ///
@@ -181,7 +179,7 @@ public interface DomainObject<K extends PrimaryKey> {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
 
-    /// 이 메소드는 [#getPrimaryKey()]를 사용하여 PK만을 비교한다.
+    /// 이 메소드는 [#primaryKey()]를 사용하여 PK만을 비교한다.
     ///
     /// [Object#equals(Object)]와 [Object#hashCode()]는
     /// 의미론적인 동등성을 위해 필요한 필드만을 비교에 포함시킨다.
@@ -192,6 +190,6 @@ public interface DomainObject<K extends PrimaryKey> {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         DomainObject<?> that = (DomainObject<?>) obj;
-        return Objects.equals(getPrimaryKey(), that.getPrimaryKey());
+        return Objects.equals(primaryKey(), that.primaryKey());
     }
 }

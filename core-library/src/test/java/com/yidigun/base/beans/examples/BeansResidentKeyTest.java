@@ -73,7 +73,8 @@ public class BeansResidentKeyTest {
         assertEquals("111111", key.subSequence(0, 6));
 
         Calendar cal = Calendar.getInstance();
-        cal.set(1911, 10, 11);
+        cal.set(1911, 10, 11, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         assertEquals(cal.toInstant(), key.getBirthday());
     }
 }
