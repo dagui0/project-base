@@ -4,13 +4,6 @@ plugins {
     alias(libs.plugins.lombok)
 }
 
-group = rootProject.group
-version = rootProject.version
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
 
     implementation(project(":core-api"))
@@ -30,13 +23,4 @@ dependencies {
     // junit
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
-}
-
-tasks.withType<JavaCompile> {
-    options.release.set(libs.versions.java.get().toInt())
-    options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-processing"))
-}
-
-tasks.test {
-    useJUnitPlatform()
 }

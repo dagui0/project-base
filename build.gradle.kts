@@ -1,8 +1,9 @@
+// $projectRoot/build.gradle.kts
 import java.net.URI
 
 plugins {
-    id("java-library")
-    id("maven-publish")
+    id("java")
+    alias(libs.plugins.lombok)
 }
 
 group = "com.yidigun"
@@ -12,50 +13,63 @@ ext {
     set("java.version", libs.versions.java.get())
     set("project.info.dir", "generated/sources/project-info/java/main")
     set("project.info.package", "com.yidigun.base")
-}
-
-repositories {
-    mavenCentral()
+    set("publish.name", "Project Base Classes")
+    set("publish.description", "Project base classes and utilities for common coding conventions")
+    set("publish.url", "https://github.com/dagui0/project-base")
+    set("publish.license", "The Apache License, Version 2.0")
+    set("publish.license.url", "https://www.apache.org/licenses/LICENSE-2.0.txt")
+    set("publish.developer.id", "dagui0")
+    set("publish.developer.name", "Daekyu Lee")
+    set("publish.developer.email", "dagui0@gmail.com")
+    set("publish.scm.connection", "scm:git:https://github.com/dagui0/project-base.git")
+    set("publish.scm.url", "https://github.com/dagui0/project-base")
+    set("publish.repo.name", "nexus.yidigun.com")
+    set("publish.repo.release.url", "https://nexus.yidigun.com/repository/maven-releases/")
+    set("publish.repo.snapshot.url", "https://nexus.yidigun.com/repository/maven-snapshots/")
 }
 
 dependencies {
 
+    implementation(project(":core-api"))
+    implementation(project(":core-library"))
+    implementation(project(":annotation-processors"))
+    annotationProcessor(project(":annotation-processors"))
+    testAnnotationProcessor(project(":annotation-processors"))
+
     // dependencies
-    compileOnly(libs.jetbrains.annotations)
+    implementation(libs.jetbrains.annotations)
+    implementation(libs.commons.lang3)
+    implementation(libs.slf4j.api)
 
     // Lombok
-    compileOnly(libs.lombok)
-    annotationProcessor(libs.lombok)
-    testImplementation(libs.lombok)
-    testAnnotationProcessor(libs.lombok)
-
-    // compile testing
-    testImplementation(libs.guava)
-    testImplementation(libs.compile.testing)
+    lombok(libs.lombok)
 
     // junit
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-tasks.withType<JavaCompile> {
-    options.release.set(libs.versions.java.get().toInt())
-    options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-processing"))
+val javadocSources = objects.fileCollection()
+val javadocClasspath = objects.fileCollection()
+
+tasks.register<Task>("prepareAllSources") {
+    dependsOn(project(":core-api").tasks.named("prepareJavadoc"))
+    dependsOn(project(":core-library").tasks.named("prepareJavadoc"))
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
+tasks.javadoc {
+    group = "documentation"
+    description = "Generates aggregated Javadoc documentation for all modules."
 
-tasks.jar {
-    archiveBaseName.set(project.name)
-    archiveVersion.set(project.version.toString())
-}
+    dependsOn("prepareAllSources")
 
-tasks.withType<Javadoc> {
+    source.removeAll { true }
+    classpath.removeAll { true }
+    source(javadocSources)
+    classpath += javadocClasspath
 
     javadocTool.set(javaToolchains.javadocToolFor {
-        languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get().toInt()))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.javadoc.get().toInt()))
     })
 
     options {
@@ -77,47 +91,46 @@ tasks.withType<Javadoc> {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
+subprojects {
+    group = rootProject.group
+    version = rootProject.version
 
-            pom {
-                name.set("Project Base Classes")
-                description.set("Project base classes and utilities for common coding conventions")
-                url.set("https://github.com/dagui0/project-base")
+    tasks.withType<Javadoc> {
+        enabled = false
+    }
 
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("dagui0")
-                        name.set("Daekyu Lee")
-                        email.set("dagui0@gmail.com")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:https://github.com/dagui0/project-base.git")
-                    url.set("https://github.com/dagui0/project-base")
-                }
-            }
+    tasks.register<Task>("prepareJavadoc") {
+        if (project.name.startsWith("core-")) {
+            javadocSources.from(project.sourceSets.main.get().allJava)
+            javadocClasspath.from(project.sourceSets.main.get().compileClasspath)
         }
     }
-    repositories {
-        maven {
-            name = "nexus.yidigun.com"
-            val releasesRepoUrl = "https://nexus.yidigun.com/repository/maven-releases/"
-            val snapshotsRepoUrl = "https://nexus.yidigun.com/repository/maven-snapshots/"
-            url = URI(if (project.version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+}
 
-            credentials {
-                username = project.findProperty("nexusUsername") as String? ?: System.getenv("NEXUS_USERNAME")
-                password = project.findProperty("nexusPassword") as String? ?: System.getenv("NEXUS_PASSWORD")
-            }
-        }
+allprojects {
+
+    repositories {
+        mavenCentral()
+//        maven {
+//            url = URI(rootProject.ext["publish.repo.release.url"].toString())
+//            credentials {
+//                username = rootProject.findProperty("nexusUsername") as String? ?: System.getenv("NEXUS_USERNAME")
+//                password = rootProject.findProperty("nexusPassword") as String? ?: System.getenv("NEXUS_PASSWORD")
+//            }
+//        }
+    }
+
+    tasks.withType<JavaCompile> {
+        options.release.set(libs.versions.java.get().toInt())
+        options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-processing"))
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
+
+    tasks.withType<Jar> {
+        archiveBaseName.set(project.name)
+        archiveVersion.set(project.version.toString())
     }
 }

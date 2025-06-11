@@ -17,6 +17,7 @@ h2 = "2.3.232"
 commonsCompress = "1.27.1"
 mapstruct = "1.6.3"
 springdocOpenapi = "2.8.8"
+shadowPlugin = "8.1.1"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
@@ -45,3 +46,4 @@ springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openap
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
 lombok = { id = "io.freefair.lombok", version.ref = "lombokPlugin" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadowPlugin" }
