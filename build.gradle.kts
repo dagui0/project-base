@@ -26,6 +26,8 @@ ext {
     set("publish.repo.name", "nexus.yidigun.com")
     set("publish.repo.release.url", "https://nexus.yidigun.com/repository/maven-releases/")
     set("publish.repo.snapshot.url", "https://nexus.yidigun.com/repository/maven-snapshots/")
+    set("private-repo.username", System.getenv("NEXUS_USERNAME") ?: "")
+    set("private-repo.password", System.getenv("NEXUS_PASSWORD") ?: "")
 }
 
 dependencies {
