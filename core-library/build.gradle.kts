@@ -1,4 +1,4 @@
-// core-library/build.gradle.kts
+// :core-library/build.gradle.kts
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.net.URI
 
@@ -93,8 +93,8 @@ publishing {
                     .endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
 
             credentials {
-                username = rootProject.findProperty("nexusUsername") as String? ?: System.getenv("NEXUS_USERNAME")
-                password = rootProject.findProperty("nexusPassword") as String? ?: System.getenv("NEXUS_PASSWORD")
+                username = rootProject.ext["private-repo.username"].toString()
+                password = rootProject.ext["private-repo.password"].toString()
             }
         }
     }

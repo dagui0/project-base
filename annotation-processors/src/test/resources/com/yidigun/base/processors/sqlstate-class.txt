@@ -1,0 +1,46 @@
+# name,code,message,standard
+UNKNOWN,??,Unknown SQL State Class (maybe DBMS specific),custom
+CONNECTION_TIMEOUT,C~,Connection Timeout,custom
+QUERY_TIMEOUT,Q~,Query Timeout,custom
+SUCCESS,00,Success,sql99
+WARNING,01,Warning,sql99
+NO_DATA,02,No Data,sql99
+NOT_COMPLETE,03,Not Complete,sql99
+CONNECTION_EXCEPTION,08,Connection Exception,sql99
+TRIGGERED_ACTION_EXCEPTION,09,Triggered Action Exception,sql99
+FEATURE_NOT_SUPPORTED,0A,Feature Not Supported,sql99
+INVALID_TRANSACTION_INITIATION,0B,Invalid Transaction Initiation,sql99
+LOCATOR_EXCEPTION,0F,Locator Exception,sql99
+INVALID_GRANTOR,0L,Invalid Grantor,sql99
+INVALID_ROLE_SPECIFICATION,0P,Invalid Role Specification,sql99
+DIAGNOSTICS_EXCEPTION,0Z,Diagnostics Exception,sql99
+CASE_NOT_FOUND,20,Case Not Found,sql99
+CARDINALITY_VIOLATION,21,Cardinality Violation,sql99
+DATA_EXCEPTION,22,Data Exception,sql99
+INTEGRITY_CONSTRAINT_VIOLATION,23,Integrity Constraint Violation,sql99
+INVALID_CURSOR_STATE,24,Invalid Cursor State,sql99
+INVALID_TRANSACTION_STATE,25,Invalid Transaction State,sql99
+INVALID_SQL_STATEMENT_NAME,26,Invalid SQL Statement Name,sql99
+TRIGGERED_DATA_CHANGE_VIOLATION,27,Triggered Data Change Violation,sql99
+INVALID_AUTHORIZATION_SPECIFICATION,28,Invalid Authorization Specification,sql99
+DEPENDENT_PRIVILEGE_DESCRIPTORS_STILL_EXIST,2B,Dependent Privilege Descriptors Still Exist,sql99
+INVALID_TRANSACTION_TERMINATION,2D,Invalid Transaction Termination,sql99
+SQL_ROUTINE_EXCEPTION,2F,SQL Routine Exception,sql99
+INVALID_CURSOR_NAME,34,Invalid Cursor Name,sql99
+EXTERNAL_ROUTINE_EXCEPTION,38,External Routine Exception,sql99
+EXTERNAL_ROUTINE_INVOCATION_EXCEPTION,39,External Routine Invocation Exception,sql99
+SAVEPOINT_EXCEPTION,3B,Savepoint Exception,sql99
+INVALID_CATALOG_NAME,3D,Invalid Catalog Name,sql99
+INVALID_SCHEMA_NAME,3F,Invalid Schema Name,sql99
+TRANSACTION_ROLLBACK,40,Transaction Rollback,sql99
+SYNTAX_ERROR_OR_ACCESS_RULE_VIOLATION,42,Syntax Error or Access Rule Violation,sql99
+WITH_CHECK_OPTION_VIOLATION,44,With Check Option Violation,sql99
+INSUFFICIENT_RESOURCES,53,Insufficient Resources,sql99
+PROGRAM_LIMIT_EXCEEDED,54,Program Limit Exceeded,sql99
+OBJECT_NOT_IN_PREREQUISITE_STATE,55,Object Not In Prerequisite State,sql99
+OPERATOR_INTERVENTION,57,Operator Intervention,sql99
+SYSTEM_ERROR,58,System Error,sql99
+CONFIGURATION_FILE_ERROR,F0,Configuration File Error,sql99
+FOREIGN_DATA_WRAPPER_ERROR,HV,Foreign Data Wrapper Error,sql99
+PLPGSQL_ERROR,P0,PL/pgSQL Error,PostgreSQL
+INTERNAL_ERROR,XX,Internal Error,PostgreSQL

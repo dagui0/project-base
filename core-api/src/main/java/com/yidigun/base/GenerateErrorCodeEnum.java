@@ -11,8 +11,11 @@ import java.lang.annotation.*;
 /// 패키지에 지정하는 경우
 ///
 /// ```java
-/// @GenerateErrorCodeEnum("SQLStateClass", from="sql_error_codes.csv", implement=SQLStateClassIf.class)
-/// @GenerateErrorCodeEnum("HttpStatus", from="http_status.csv", toPackage="com.yidigun.base.utils")
+/// @GenerateErrorCodeEnum("SQLStateClass",
+///                        from="codes/db/sql_error_codes.csv",
+///                        implement="com.yidigun.base.sql.SQLStateClassIf")
+/// @GenerateErrorCodeEnum("com.yidigun.base.utils.HttpStatus",
+///                        from="codes/net/HttpStatus.csv")
 /// package com.yidigun.base;
 /// ```
 ///
@@ -24,7 +27,7 @@ import java.lang.annotation.*;
 /// ```java
 /// package com.yidigun.base.sql;
 ///
-/// @GenerateErrorCodeEnum("DbErrorCode", from="db_error_codes.csv")
+/// @GenerateErrorCodeEnum("DbErrorCode", from="codes/db/db_error_codes.csv")
 /// public interface DbErrorCode extends ErrorCode {
 ///
 ///    // default, static 메서드 등을 정의할 수 있다.
@@ -130,6 +133,29 @@ import java.lang.annotation.*;
 ///     SQLStateClass clazz = SQLStateClass.of(e);
 ///     ...
 /// }
+/// ```
+///
+/// ## 설정 지정 방법
+///
+/// ```java
+/// // 0. 기본형
+/// @GenerateErrorCodeEnum("com.example.code.DbErrorCode",
+///                        from="com/example/code/db_error_codes.csv",
+///                        implement="com.example.code.DbErrorCodeIf")
+/// package com.example;
+///
+/// // 1. 패키지에 지정시 패키지 생략 가능
+/// @GenerateErrorCodeEnum("DbErrorCode",
+///                        from="com/example/code/db_error_codes.csv",
+///                        implement="com.example.code.DbErrorCodeIf")
+/// package com.example.code;
+///
+///
+/// // 2. 인터페이스에 지정시 패키지, implement 생략 가능
+/// package com.example.code;
+///
+/// @GenerateErrorCodeEnum("DbErrorCode", from="com/example/code/db_error_codes.csv")
+/// public interface DbErrorCodeIf extends ErrorCode {}
 /// ```
 ///
 @Target({ElementType.TYPE, ElementType.PACKAGE})

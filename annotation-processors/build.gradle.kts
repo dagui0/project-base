@@ -11,6 +11,10 @@ dependencies {
     // dependencies
     implementation(libs.jetbrains.annotations)
     implementation(libs.slf4j.api)
+    implementation(libs.commons.csv)
+    implementation(libs.javapoet)
+    implementation(libs.auto.service)
+    annotationProcessor(libs.auto.service)
 
     // Lombok
     lombok(libs.lombok)

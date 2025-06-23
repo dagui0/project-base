@@ -4,7 +4,6 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
 import com.yidigun.base.ProjectInfo;
-import lombok.launch.AnnotationProcessorHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +17,8 @@ public class CheckEqualsAndHashCodeProcessorTest {
 
     private Compiler getTestCompiler() {
 
-        Processor lombok = AnnotationProcessorHelper.getAnnotationProcessor();
-        Processor claiming = AnnotationProcessorHelper.getClaimingProcessor();
+        Processor lombok = LombokAnnotationProcessorHelper.getAnnotationProcessor();
+        Processor claiming = LombokAnnotationProcessorHelper.getClaimingProcessor();
 
         CheckEqualsAndHashCodeProcessor processor = new CheckEqualsAndHashCodeProcessor();
         return Compiler.javac()

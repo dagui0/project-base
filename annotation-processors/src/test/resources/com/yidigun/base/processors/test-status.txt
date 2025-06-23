@@ -1,0 +1,8 @@
+# name,code,message
+PASSED,00,Test passed successfully.
+FAILED,E1,Test failed due to an assertion error.
+ERROR,E2,Test encountered an unexpected error.
+TIMEOUT,E3,Test execution timed out.
+SKIPPED,S1,Test was skipped due to a condition not being met.
+IGNORE,S2,Test was ignored and not executed.
+DISABLED,S3,Test was disabled and not executed.

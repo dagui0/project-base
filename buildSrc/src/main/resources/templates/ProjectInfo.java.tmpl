@@ -1,0 +1,57 @@
+# This file is a template used by the 'GenerateProjectInfoTask' Gradle task
+# to generate a Java source file. The generated file is then compiled with
+# the rest of the project's source code.
+#
+# This template file itself should not be packaged into the final artifact.
+#
+# The values for placeholders, like `${key}`, are substituted
+# from the Gradle project properties during the build process.
+package ${project.info.package};
+
+import javax.lang.model.SourceVersion;
+
+/**
+ * Provides project metadata constants.
+ *
+ * <p>This class is generated automatically by a custom Gradle task.
+ */
+public final class ${project.info.class} {
+
+    /**
+     * The Java version used for compilation.
+     *
+     * <p>This value reflects the configured Gradle toolchain. If no toolchain is
+     * specified, it defaults to the JDK version used to run Gradle.
+     */
+    public static final SourceVersion JAVA_RELEASE = SourceVersion.RELEASE_${java.version};
+
+    /**
+     * Returns the Java release version as an integer.
+     * @return the ordinal of the Java release version (e.g., 17)
+     */
+    public static int javaReleaseNo() { return JAVA_RELEASE.ordinal(); }
+
+    /**
+     * Returns the Java release version as a string.
+     * @return the string representation of the Java release version
+     */
+    public static String javaReleaseNoString() { return String.valueOf(JAVA_RELEASE.ordinal()); }
+
+    /**
+     * The group ID of the project.
+     */
+    public static final String GROUP_ID = "${project.group}";
+
+    /**
+     * The artifact ID (name) of the project.
+     */
+    public static final String ARTIFACT_ID = "${project.name}";
+
+    /**
+     * The version of the project.
+     */
+    public static final String VERSION = "${project.version}";
+
+    // Private constructor to prevent instantiation.
+    private ProjectInfo() {}
+}

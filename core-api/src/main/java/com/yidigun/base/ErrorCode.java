@@ -46,7 +46,7 @@ public interface ErrorCode extends Serializable {
 
     /// 항목을 찾을 수 없는 오류
     // TODO: 메시지 번들 적용 방안
-    ErrorCode NOT_FOUND = new AdHocErrorCode("NOT_FOUND", "Requested resource not found.");
+    ErrorCode NOT_FOUND = new AdHocErrorCode("NOT_FOUND", "Requested resources not found.");
 
     /// 오류 코드
     /// @return 오류 코드

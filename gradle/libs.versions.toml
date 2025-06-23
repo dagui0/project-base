@@ -18,6 +18,10 @@ commonsCompress = "1.27.1"
 mapstruct = "1.6.3"
 springdocOpenapi = "2.8.8"
 shadowPlugin = "8.1.1"
+javapoet = "1.13.0"
+autoService = "1.1.1"
+commonsCsv = "1.14.0"
+freemarker = "2.3.34"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
@@ -25,9 +29,16 @@ jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "j
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-compile-testing = { module = "com.google.testing.compile:compile-testing", version.ref = "compileTesting" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatform" }
+
+# annotation-processors dependencies
+compile-testing = { module = "com.google.testing.compile:compile-testing", version.ref = "compileTesting" }
+javapoet = { module = "com.squareup:javapoet", version.ref = "javapoet" }
+auto-service = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
+commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "commonsCsv" }
+
+# example-project dependencies
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
 spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "springBoot" }
@@ -42,8 +53,11 @@ commons-compress = { module = "org.apache.commons:commons-compress", version.ref
 mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdocOpenapi" }
 
+# generate templates plugin
+freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
+
 [plugins]
-spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
 lombok = { id = "io.freefair.lombok", version.ref = "lombokPlugin" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadowPlugin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
